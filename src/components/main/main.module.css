@@ -1,0 +1,20 @@
+.main{
+    width: 100%;
+    overflow-y: scroll;
+}
+.user{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    height: 50px;
+    padding: 1% 4% 0 0;
+}
+.nameUser{
+    margin: 2px 2%;
+}
+.title{
+    background-color: #e7e7e7d4;
+    color: #696969;
+    padding-left: 4%;
+   
+}

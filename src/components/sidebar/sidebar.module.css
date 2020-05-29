@@ -1,0 +1,20 @@
+.sidebar{
+    width: 260px;
+    min-width: 200px;
+    height: 100%;
+    background:#fc9643!important;
+    display: flex;
+    flex-direction: column;
+}
+.logoSmart{
+    height: 20%;
+}
+.links{
+    color: white;
+    text-decoration: inherit;
+    margin-top: 8%;
+    padding: 7px 5px 7px 45px;
+}
+.activeLinks{
+    background-color: #ffffff47;
+}
