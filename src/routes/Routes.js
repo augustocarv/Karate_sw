@@ -14,6 +14,10 @@ import Main from '../components/main/main'
 
 /*Pages */
 import Associacao from '../pages/associacao/associacao'
+import Atletas from '../pages/atletas/atletas';
+import AulasFrequencias from '../pages/aulasfrequencias/aulasfrequencias';
+import Campeonatos from '../pages/campeonatos/campeonatos';
+import Prestacoes from '../pages/prestacoes/prestacoes';
 
 const App = () => {
   return (
@@ -24,32 +28,40 @@ const App = () => {
             <Fragment>
               <Sidebar />
               <Main title={'Associação'}>
-                <Associacao/>
+                <Associacao />
               </Main>
             </Fragment>
           } />
           <Route path="/Atletas" render={(props) =>
             <Fragment>
               <Sidebar />
-              <Main title={'Atletas'}/>
+              <Main title={'Atletas'}>
+                <Atletas />
+              </Main>
             </Fragment>
           } />
           <Route path="/AulasFrequencias" render={(props) =>
             <Fragment>
               <Sidebar />
-              <Main title={'Aulas e Frequências'}/>
+              <Main title={'Aulas e Frequências'}>
+                <AulasFrequencias />
+              </Main>
             </Fragment>
           } />
           <Route path="/Campeonatos" render={(props) =>
             <Fragment>
               <Sidebar />
-              <Main title={'Campeonatos'}/>
+              <Main title={'Campeonatos'}>
+                <Campeonatos />
+              </Main>
             </Fragment>
           } />
           <Route path="/Prestacoes" render={(props) =>
             <Fragment>
               <Sidebar />
-              <Main title={'Prestações de Contas'}/>
+              <Main title={'Prestações de Contas'}>
+                <Prestacoes />
+              </Main>
             </Fragment>
           } />
           <Redirect exact from="/*" to="/Associação" />
