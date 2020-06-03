@@ -4,6 +4,7 @@ import Menu from '@material-ui/core/Menu';
 import styles from './dropdown.module.css'
 import { Link } from 'react-router-dom'
 
+
 const ComponentDropdown = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const handleClick = event => {
@@ -12,6 +13,13 @@ const ComponentDropdown = () => {
     const handleClose = () => {
         setAnchorEl(null);
     }
+    const Logout = () => {
+        if (window.confirm('Deseja sair do sistema ?')) {
+            sessionStorage.clear()
+            window.location.href = "/Login"
+        }
+    }
+
     return (
         <div>
             <div onClick={handleClick}>
@@ -25,17 +33,15 @@ const ComponentDropdown = () => {
                 onClose={handleClose}
                 style={{ marginTop: '1.5%' }}
             >
-                <div style={{ padding: '7px' }}>
-                    <Link to="/Agenda" style={{ color: 'black', textDecoration: 'inherit' }}>
+                <div style={{ outline: 'none', padding: '7px' }}>
+                    <Link to="/Perfil" style={{ color: 'black', textDecoration: 'inherit' }}>
                         <div className={styles.menuItem} onClick={handleClose}>
                             Editar Perfil
-                    </div>
+                        </div>
                     </Link>
-                    <Link to="/Checkin" style={{ color: 'black', textDecoration: 'inherit' }}>
-                        <div className={styles.menuItem} onClick={handleClose}>
-                            Logout
+                    <div onClick={handleClose, Logout} className={styles.menuItem}>
+                        Logout
                     </div>
-                    </Link>
                 </div>
             </Menu>
         </div>

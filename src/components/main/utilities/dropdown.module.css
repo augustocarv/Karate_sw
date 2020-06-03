@@ -1,9 +1,13 @@
 .menuItem{
     font-size: 15px;
     margin:5px 5px;
+    cursor: pointer;
 }
 .userImg{
     color: #696969;
     font-size: 28px;
     cursor: pointer;
+}
+#simple-menu:focus{
+    border: none;
 }

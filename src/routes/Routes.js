@@ -7,6 +7,8 @@ import {
   Redirect
 } from "react-router-dom";
 import './Routes.css';
+import PrivateRoute from './PrivateRoute'
+import history from './history'
 
 /* Components */
 import Sidebar from '../components/sidebar/sidebar'
@@ -18,13 +20,19 @@ import Atletas from '../pages/atletas/atletas';
 import AulasFrequencias from '../pages/aulasfrequencias/aulasfrequencias';
 import Campeonatos from '../pages/campeonatos/campeonatos';
 import Prestacoes from '../pages/prestacoes/prestacoes';
+import Login from '../pages/login/login';
+
 
 const App = () => {
   return (
-    <Router>
-      <div className="App">
-        <Switch>
-          <Route path="/Associação" render={(props) =>
+    <Router history={history}>
+      <Switch>
+        <Route path="/Login" exact render={(props) =>
+          <Login />
+        } />
+        <div className="App">
+          <Redirect exact from="/*" to="/Associação" />
+          <PrivateRoute path="/Associação" render={(props) =>
             <Fragment>
               <Sidebar />
               <Main title={'Associação'}>
@@ -32,7 +40,7 @@ const App = () => {
               </Main>
             </Fragment>
           } />
-          <Route path="/Atletas" render={(props) =>
+          <PrivateRoute path="/Atletas" render={(props) =>
             <Fragment>
               <Sidebar />
               <Main title={'Atletas'}>
@@ -40,7 +48,7 @@ const App = () => {
               </Main>
             </Fragment>
           } />
-          <Route path="/AulasFrequencias" render={(props) =>
+          <PrivateRoute path="/AulasFrequencias" render={(props) =>
             <Fragment>
               <Sidebar />
               <Main title={'Aulas e Frequências'}>
@@ -48,7 +56,7 @@ const App = () => {
               </Main>
             </Fragment>
           } />
-          <Route path="/Campeonatos" render={(props) =>
+          <PrivateRoute path="/Campeonatos" render={(props) =>
             <Fragment>
               <Sidebar />
               <Main title={'Campeonatos'}>
@@ -56,7 +64,7 @@ const App = () => {
               </Main>
             </Fragment>
           } />
-          <Route path="/Prestacoes" render={(props) =>
+          <PrivateRoute path="/Prestacoes" render={(props) =>
             <Fragment>
               <Sidebar />
               <Main title={'Prestações de Contas'}>
@@ -64,9 +72,8 @@ const App = () => {
               </Main>
             </Fragment>
           } />
-          <Redirect exact from="/*" to="/Associação" />
-        </Switch>
-      </div>
+        </div>
+      </Switch>
     </Router>
   );
 }
