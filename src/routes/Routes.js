@@ -14,13 +14,16 @@ import history from './history'
 import Sidebar from '../components/sidebar/sidebar'
 import Main from '../components/main/main'
 
-/*Pages */
+/* Pages */
 import Associacao from '../pages/associacao/associacao'
 import Atletas from '../pages/atletas/atletas';
 import AulasFrequencias from '../pages/aulasfrequencias/aulasfrequencias';
 import Campeonatos from '../pages/campeonatos/campeonatos';
 import Prestacoes from '../pages/prestacoes/prestacoes';
 import Login from '../pages/login/login';
+
+/* Cadastros */
+import CadastroAtleta from '../pages/cadastros/atletas/atletas'
 
 
 const App = () => {
@@ -31,7 +34,7 @@ const App = () => {
           <Login />
         } />
         <div className="App">
-          <Redirect exact from="/*" to="/Associação" />
+          
           <PrivateRoute path="/Associação" render={(props) =>
             <Fragment>
               <Sidebar />
@@ -45,6 +48,14 @@ const App = () => {
               <Sidebar />
               <Main title={'Atletas'}>
                 <Atletas />
+              </Main>
+            </Fragment>
+          } />
+          <PrivateRoute path="/CadastroAtleta" render={(props) =>
+            <Fragment>
+              <Sidebar />
+              <Main title={'Atletas'}>
+                <CadastroAtleta />
               </Main>
             </Fragment>
           } />
@@ -73,6 +84,7 @@ const App = () => {
             </Fragment>
           } />
         </div>
+        <Redirect exact from="/*" to="/Associação" />
       </Switch>
     </Router>
   );

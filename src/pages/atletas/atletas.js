@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Button from '@material-ui/core/Button'
 import styles from './atletas.module.css'
+import { Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -49,17 +50,18 @@ const Atletas = (props) => {
                             <div className={styles.nameTitleCartao}>
                                 Lista de Atletas Cadastrados
                             </div>
-                            <Button variant="contained"
-                                style={{
-                                    width: '8%',
-                                    margin: '10px 15px 0 0',
-                                    textTransform: 'capitalize',
-                                    backgroundColor: '#fc9643'
-                                }}
-                                className={styles.botaoNovo}
-                                color="primary">
-                                + Novo
-                        </Button>
+                            <Link to="/CadastroAtleta" style={{ color: 'white', textDecoration: 'inherit' }}>
+                                <Button variant="contained"
+                                    style={{
+                                        margin: '10px 15px 0 0',
+                                        textTransform: 'capitalize',
+                                        backgroundColor: '#fc9643'
+                                    }}
+                                    className={styles.botaoNovo}
+                                    color="primary">
+                                    + Novo
+                                </Button>
+                            </Link>
                         </div>
                         <CardContent>
                             <div className={styles.ConteudoCartoes}>
@@ -86,7 +88,7 @@ const Atletas = (props) => {
                                                     <StyledTableCell align="center">{list.função}</StyledTableCell>
                                                     <StyledTableCell align="center">{list.kyo}</StyledTableCell>
                                                     <StyledTableCell align="center">
-                                                        <div style={{display:'flex', justifyContent:'space-evenly'}}>
+                                                        <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                                                             <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.botaoCarregar} color="primary">
                                                                 Carregar
                                                         </Button>

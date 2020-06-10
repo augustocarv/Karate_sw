@@ -8,3 +8,10 @@ body{
     width: 100%;
     height: 100vh;
 }
+button.MuiButtonBase-root.MuiButton-root.MuiButton-contained{
+    outline: none;
+}
+.ant-upload.ant-upload-select.ant-upload-select-picture-card{
+    width: 150px!important;
+    height: 150px!important;
+}

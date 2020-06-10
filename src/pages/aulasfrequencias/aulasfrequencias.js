@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Button from '@material-ui/core/Button'
 import styles from './aulasfrequencias.module.css'
+import { Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -49,17 +50,18 @@ const AulasFrequencias = (props) => {
                             <div className={styles.nameTitleCartao}>
                                 Lista de Aulas Cadastradas
                             </div>
-                            <Button variant="contained"
-                                style={{
-                                    width: '8%',
-                                    margin: '10px 15px 0 0',
-                                    textTransform: 'capitalize',
-                                    backgroundColor: '#fc9643'
-                                }}
-                                className={styles.botaoNovo}
-                                color="primary">
-                                + Novo
-                        </Button>
+                            <Link to="/CadastroAula" style={{ color: 'white', textDecoration: 'inherit' }}>
+                                <Button variant="contained"
+                                    style={{
+                                        margin: '10px 15px 0 0',
+                                        textTransform: 'capitalize',
+                                        backgroundColor: '#fc9643'
+                                    }}
+                                    className={styles.botaoNovo}
+                                    color="primary">
+                                    + Novo
+                                </Button>
+                            </Link>
                         </div>
                         <CardContent>
                             <div className={styles.ConteudoCartoes}>

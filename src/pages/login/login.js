@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from './login.module.css'
 import { Card, Image } from 'semantic-ui-react'
-// import Atleta from '../../assets/images/atletaimg.png'
+import Atleta from '../../assets/images/Atleta.png'
 import { GoMail } from 'react-icons/go'
 import { AiFillLock } from 'react-icons/ai'
 import Button from '@material-ui/core/Button'
-
 import { InputGroup, InputGroupAddon, InputGroupText, Input } from 'reactstrap';
 
 const Login = () => {
@@ -15,6 +14,13 @@ const Login = () => {
             password: ''
         }
     )
+    function handleChange(event) {
+        const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        setState({
+            ...state,
+            [event.target.name]: value
+        });
+    }
     return (
         <div className={styles.main}>
             {/* <Image src={Atleta} fluid /> */}
@@ -36,7 +42,9 @@ const Login = () => {
                             type="email"
                             placeholder="Email"
                             name="email"
-                            value={state.email} />
+                            value={state.email}
+                            onChange={event => handleChange(event)}
+                        />
                     </InputGroup>
                     <InputGroup className={styles.card_content_input}>
                         <InputGroupAddon addonType="prepend">
@@ -49,7 +57,9 @@ const Login = () => {
                             type="password"
                             placeholder="Senha"
                             name="password"
-                            value={state.password} />
+                            value={state.password}
+                            onChange={event => handleChange(event)}
+                        />
                     </InputGroup>
                     <Button
                         variant="contained"
