@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styles from './atletas.module.css'
-import { Radio } from 'semantic-ui-react';
+import { Radio, TextArea } from 'semantic-ui-react';
+import Button from '@material-ui/core/Button'
 import { Upload, message } from 'antd';
 import { InputGroup, Input, Label, Col, Row } from 'reactstrap';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
@@ -29,13 +30,15 @@ const CadastroAtletas = () => {
             cep: '',
             estado: '',
             cidade: '',
-            telefone: '',
+            telefoneCasa: '',
+            telefoneTrabalho: '',
             celular: '',
             mae: '',
             pai: '',
             responsavel: '',
-            observacoes: '',
+            informacoesAdicionais: '',
             graduacao: '',
+            complemento: '',
             loading: false
 
         }
@@ -143,8 +146,8 @@ const CadastroAtletas = () => {
             </div>
             <div className={styles.content_form}>
                 <div className={styles.form}>
-                    <Col style={{ marginRight: '0px', marginLeft: '0px' }}>
-                        <div style={{ display: 'flex', width: '80%' }}>
+                    <Col style={{ marginRight: '0px', marginLeft: '0px', padding: '0' }}>
+                        <div style={{ display: 'flex' }}>
                             <div style={{
                                 margin: '5px 10px 0 38px',
                             }}>
@@ -161,7 +164,7 @@ const CadastroAtletas = () => {
                                     {state.imagem ? <img src={state.imagem} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                                 </Upload>
                             </div>
-                            <Row style={{ marginLeft: '0px', marginRight: '0px' }}>
+                            <Row style={{ marginLeft: '30px', marginRight: '0px' }}>
                                 <div className={styles.card_inputs} style={{ width: '30%' }}>
                                     <label>Nome</label>
                                     <Input
@@ -183,7 +186,7 @@ const CadastroAtletas = () => {
                                         value={state.matricula}
                                     />
                                 </div>
-                                <div className={styles.card_inputs} style={{ width: '25%' }}>
+                                <div className={styles.card_inputs} style={{ width: '26.5%' }}>
                                     <Label>Data de Inicio</Label>
                                     <Input
                                         className={styles.inputs}
@@ -212,7 +215,7 @@ const CadastroAtletas = () => {
 
                                     </Input>
                                 </div>
-                                <div className={styles.card_inputs} style={{ width: '25%' }}>
+                                <div className={styles.card_inputs} style={{ width: '26.5%' }}>
                                     <Label>Data de Nascimento</Label>
                                     <Input
                                         className={styles.inputs}
@@ -224,11 +227,296 @@ const CadastroAtletas = () => {
                                 </div>
                             </Row>
                         </div>
-                        <hr style={{color:'black', borderStyle: 'dotted'}}></hr>
+                        <hr style={{ color: 'black', borderStyle: 'dotted' }} />
+                        <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Naturalidade</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="naturalidade"
+                                    value={state.naturalidade}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Nacionalidade</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="nacionalidade"
+                                    value={state.nacionalidade}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Profissão</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="profissao"
+                                    value={state.profissao}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                        </Row>
+                        <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '25px' }}>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Email</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="email"
+                                    name="email"
+                                    value={state.email}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>CPF</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="cpf"
+                                    value={state.cpf}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>RG</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="number"
+                                    name="rg"
+                                    value={state.rg}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                        </Row>
+                        <hr style={{ color: 'black', borderStyle: 'dotted' }} />
+                        <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Endereço</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="endereco"
+                                    value={state.endereco}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Bairro</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="bairro"
+                                    value={state.bairro}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Complemento</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="complemento"
+                                    value={state.complemento}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                        </Row>
+                        <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '25px' }}>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>CEP</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="cep"
+                                    value={state.cep}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Estado</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="estado"
+                                    value={state.estado}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Cidade</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="cidade"
+                                    value={state.cidade}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                        </Row>
+                        <hr style={{ color: 'black', borderStyle: 'dotted' }} />
+                        <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Telefone de Casa</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="telefoneCasa"
+                                    value={state.telefoneCasa}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Telefone do Trabalho</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="telefoneTrabalho"
+                                    value={state.telefoneTrabalho}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Celular</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="celular"
+                                    value={state.celular}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                        </Row>
+                        <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Mãe</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="mae"
+                                    value={state.mae}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Pai</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="pai"
+                                    value={state.pai}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                                <Label>Responsável</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    type="text"
+                                    name="responsavel"
+                                    value={state.responsavel}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                        </Row>
+                        <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
+                            <div className={styles.card_inputs} style={{ width: '87%' }}>
+                                <Label>Informações Adicionais</Label>
+                                <Input
+                                    className={styles.inputs}
+                                    style={{ height: '90px', minHeight: '90px' }}
+                                    type="textarea"
+                                    name="informacoesAdicionais"
+                                    value={state.informacoesAdicionais}
+                                    onChange={event => handleChange(event)}
+                                />
+                            </div>
+                        </Row>
+                        <Row style={{ marginLeft: '0px', marginRight: '0px', marginBottom: '15px', display: 'flex', justifyContent: 'flex-end', width: '91.5%' }}>
+                            <div style={{ marginLeft: '29%' }}>
+                                <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+                                    Salvar
+                            </Button>
+                                <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
+                                    Cancelar
+                            </Button>
+                            </div>
+                        </Row>
+
                     </Col>
                 </div>
-                <div className={styles.form_graduacao}>
-
+                <div className={styles.form_graduacao} style={{ width: '30%' }}>
+                <Label>Graduação</Label>
+                    <div style={{ border: '1px solid #A7A7A7', height: '50%', width: '80%' }}>
+                    
+                        <Radio
+                            label='Iniciante - Branca'
+                            name='graduacao'
+                            value='Branca'
+                            checked={state.graduacao === 'Branca'}
+                            onChange={event => handleChange(event)}
+                            className={styles.graduacao}
+                        />
+                        <Radio
+                            label='6º Kyu - Amarela'
+                            name='graduacao'
+                            value='Amarela'
+                            checked={state.graduacao === 'Amarela'}
+                            onChange={event => handleChange(event)}
+                            className={styles.graduacao}
+                        />
+                        <Radio
+                            label='5º Kyu - Vermelha'
+                            name='graduacao'
+                            value='Vermelha'
+                            checked={state.graduacao === 'Vermelha'}
+                            onChange={event => handleChange(event)}
+                            className={styles.graduacao}
+                        />
+                        <Radio
+                            label='4º Kyu - Laranja'
+                            name='graduacao'
+                            value='Laranja'
+                            checked={state.graduacao === 'Laranja'}
+                            onChange={event => handleChange(event)}
+                            className={styles.graduacao}
+                        />
+                        <Radio
+                            label='3º Kyu - Verde'
+                            name='graduacao'
+                            value='Verde'
+                            checked={state.graduacao === 'Verde'}
+                            onChange={event => handleChange(event)}
+                            className={styles.graduacao}
+                        />
+                        <Radio
+                            label='2º Kyu - Roxa'
+                            name='graduacao'
+                            value='Roxa'
+                            checked={state.graduacao === 'Roxa'}
+                            onChange={event => handleChange(event)}
+                            className={styles.graduacao}
+                        />
+                        <Radio
+                            label='1º Kyu - Marrom'
+                            name='graduacao'
+                            value='Marrom'
+                            checked={state.graduacao === 'Marrom'}
+                            onChange={event => handleChange(event)}
+                            className={styles.graduacao}
+                        />
+                        <Radio
+                            label='1º Dan - Preta'
+                            name='graduacao'
+                            value='Preta'
+                            checked={state.graduacao === 'Preta'}
+                            onChange={event => handleChange(event)}
+                            className={styles.graduacao}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

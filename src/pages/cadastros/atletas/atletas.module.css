@@ -9,6 +9,12 @@
     padding: 20px;
     font-size: 13px;
 }
+.graduacao{
+    padding: 10px;
+}
+.content_form{
+    display: flex;
+}
 .title{
     padding: 27px 27px 27px 52px;
     font-size: 15px;
@@ -33,4 +39,10 @@ input[type=radio]:checked{
 .inputs:focus{
     box-shadow: none;
     border: 1px solid rgb(252, 150, 67);
+}
+.btn_salvar{
+    width: 8%;
+    min-width: 74px!important;
+    margin: 10px!important;
+
 }
