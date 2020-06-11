@@ -227,7 +227,7 @@ const CadastroAtletas = () => {
                                 </div>
                             </Row>
                         </div>
-                        <hr style={{ color: 'black', borderStyle: 'dotted' }} />
+                        <hr className={styles.hr}/>
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
                             <div className={styles.card_inputs} style={{ width: '27.2%' }}>
                                 <Label>Naturalidade</Label>
@@ -292,7 +292,7 @@ const CadastroAtletas = () => {
                                 />
                             </div>
                         </Row>
-                        <hr style={{ color: 'black', borderStyle: 'dotted' }} />
+                        <hr className={styles.hr}/>
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
                             <div className={styles.card_inputs} style={{ width: '27.2%' }}>
                                 <Label>Endereço</Label>
@@ -357,7 +357,7 @@ const CadastroAtletas = () => {
                                 />
                             </div>
                         </Row>
-                        <hr style={{ color: 'black', borderStyle: 'dotted' }} />
+                        <hr className={styles.hr}/>
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
                             <div className={styles.card_inputs} style={{ width: '27.2%' }}>
                                 <Label>Telefone de Casa</Label>

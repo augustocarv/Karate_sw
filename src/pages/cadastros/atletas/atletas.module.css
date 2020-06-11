@@ -15,6 +15,12 @@
 .content_form{
     display: flex;
 }
+.hr{
+    color: black;
+    border-style: dotted;
+    width: 90%;
+    margin: 20px 0 20px 20px;
+}
 .title{
     padding: 27px 27px 27px 52px;
     font-size: 15px;
