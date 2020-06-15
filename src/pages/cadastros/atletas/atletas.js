@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styles from './atletas.module.css'
-import { Radio, TextArea } from 'semantic-ui-react';
+import { Radio } from 'semantic-ui-react';
 import Button from '@material-ui/core/Button'
 import { Upload, message } from 'antd';
-import { InputGroup, Input, Label, Col, Row } from 'reactstrap';
+import { Input, Label, Col, Row } from 'reactstrap';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 
