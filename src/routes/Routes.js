@@ -24,6 +24,7 @@ import Login from '../pages/login/login';
 
 /* Cadastros */
 import CadastroAtleta from '../pages/cadastros/atletas/atletas'
+import CadastroAulasFreq from '../pages/cadastros/aulasfrequencias/aulasfrequencias';
 
 
 const App = () => {
@@ -64,6 +65,14 @@ const App = () => {
               <Sidebar />
               <Main title={'Aulas e Frequências'}>
                 <AulasFrequencias />
+              </Main>
+            </Fragment>
+          } />
+          <PrivateRoute path="/CadastroAula" render={(props) =>
+            <Fragment>
+              <Sidebar />
+              <Main title={'Aulas e Frequências'}>
+                <CadastroAulasFreq />
               </Main>
             </Fragment>
           } />
