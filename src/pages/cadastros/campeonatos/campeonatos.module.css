@@ -1,0 +1,29 @@
+.inputs{
+    height: 35px;
+   color: #636363;
+}
+.card_inputs{
+    margin: 0 13px 0 13px;
+    display: flex;
+    flex-direction: column;
+}
+.container{
+    margin: 10px;
+}
+.hr{
+    color: black;
+    border-style: dotted;
+    width: 90%;
+    margin: 20px 0 20px 20px;
+}
+.title{
+    padding: 27px 27px 27px 41px;
+    font-size: 15px;
+}
+
+.btn_salvar{
+    width: 8%;
+    min-width: 74px!important;
+    margin: 10px!important;
+
+}

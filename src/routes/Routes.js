@@ -25,7 +25,8 @@ import Login from '../pages/login/login';
 /* Cadastros */
 import CadastroAtleta from '../pages/cadastros/atletas/atletas'
 import CadastroAulasFreq from '../pages/cadastros/aulasfrequencias/aulasfrequencias';
-
+import CadastroCampeonatos from '../pages/cadastros/campeonatos/campeonatos'
+import CadastroPrestacoes from '../pages/cadastros/prestacoes/prestacoes'
 
 const App = () => {
   return (
@@ -84,11 +85,27 @@ const App = () => {
               </Main>
             </Fragment>
           } />
+          <PrivateRoute path="/CadastroCampeonato" render={(props) =>
+            <Fragment>
+              <Sidebar />
+              <Main title={'Campeonatos'}>
+                <CadastroCampeonatos />
+              </Main>
+            </Fragment>
+          } />
           <PrivateRoute path="/Prestacoes" render={(props) =>
             <Fragment>
               <Sidebar />
               <Main title={'Prestações de Contas'}>
                 <Prestacoes />
+              </Main>
+            </Fragment>
+          } />
+          <PrivateRoute path="/CadastroPrestacao" render={(props) =>
+            <Fragment>
+              <Sidebar />
+              <Main title={'Prestações de Contas'}>
+                <CadastroPrestacoes />
               </Main>
             </Fragment>
           } />
