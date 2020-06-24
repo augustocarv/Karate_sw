@@ -79,7 +79,7 @@ const AulasFrequencias = (props) => {
                                         </TableHead>
                                         <TableBody>
                                             {list.map((list, index) => (
-                                                <StyledTableRow key={list.id}>
+                                                <StyledTableRow key={index}>
                                                     <StyledTableCell align="center" component="th" scope="row">
                                                         {index + 1}
                                                     </StyledTableCell>

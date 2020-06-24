@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './atletas.module.css'
 import { Radio } from 'semantic-ui-react';
 import Button from '@material-ui/core/Button'
@@ -6,19 +6,21 @@ import { Upload, message } from 'antd';
 import { Input, Label, Col, Row } from 'reactstrap';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
+import { withRouter } from 'react-router-dom'
+import api from '../../../service/api'
 
 
-const CadastroAtletas = () => {
+const CadastroAtletas = (props) => {
     const [state, setState] = useState(
         {
-            funcao: '',
+            funcao: 0,
             imagem: '',
             nome: '',
             matricula: '',
-            dataInicio: '',
+            dataInicio: new Date(),
             nomeSocial: '',
             genero: '',
-            dataNascimento: '',
+            dataNascimento: new Date(),
             naturalidade: '',
             nacionalidade: '',
             profissao: '',
@@ -37,12 +39,101 @@ const CadastroAtletas = () => {
             pai: '',
             responsavel: '',
             informacoesAdicionais: '',
-            graduacao: '',
+            graduacao: 0,
             complemento: '',
+            editItem: false,
             loading: false
 
         }
     )
+    useEffect(() => {
+        if (props.location.state) {
+            setState({
+                imagem: props.location.state.imagem,
+                nome: props.location.state.nome,
+                naturalidade: props.location.state.naturalidade,
+                nacionalidade: props.location.state.nacionalidade,
+                profissao: props.location.state.profissao,
+                tipoAtleta: props.location.state.funcao,
+                graduacao: props.location.state.graduacao,
+                dataInicio: new Date(props.location.state.dataInicio),
+                dataNascimento: new Date(props.location.state.dataNascimento),
+                email: props.location.state.email,
+                cpf: props.location.state.cpf,
+                rg: props.location.state.rg,
+                rua: props.location.state.endereco,
+                bairro: props.location.state.bairro,
+                cep: props.location.state.cep,
+                estado: props.location.state.estado,
+                cidade: props.location.state.cidade,
+                telefone: props.location.state.telefoneCasa,
+                celular: props.location.state.celular,
+                editItem: true
+            })
+        }
+    }, [props])
+
+    function handleSave() {
+        api.post('api/atletas', {
+            imagem: state.imagem,
+            nome: state.nome,
+            naturalidade: state.naturalidade,
+            nacionalidade: state.nacionalidade,
+            profissao: state.profissao,
+            tipoAtleta: state.funcao,
+            graduacao: state.graduacao,
+            dataInicio: state.dataInicio,
+            dataNascimento: state.dataNascimento,
+            email: state.email,
+            cpf: state.cpf,
+            rg: state.rg,
+            rua: state.endereco,
+            bairro: state.bairro,
+            cep: state.cep,
+            estado: state.estado,
+            cidade: state.cidade,
+            telefone: state.telefoneCasa,
+            celular: state.celular
+        })
+            .then((response) => {
+                message.success('Sucesso ao gravar Atleta')
+            })
+            .catch((error) => {
+                message.error('Erro ao gravar Atleta')
+            })
+    }
+    function handleEdit() {
+        if (props.location.state) {
+            api.post('api/atletas', {
+                id: props.location.state.id,
+                imagem: state.imagem,
+                nome: state.nome,
+                naturalidade: state.naturalidade,
+                nacionalidade: state.nacionalidade,
+                profissao: state.profissao,
+                tipoAtleta: state.funcao,
+                graduacao: state.graduacao,
+                dataInicio: state.dataInicio,
+                dataNascimento: state.dataNascimento,
+                email: state.email,
+                cpf: state.cpf,
+                rg: state.rg,
+                rua: state.endereco,
+                bairro: state.bairro,
+                cep: state.cep,
+                estado: state.estado,
+                cidade: state.cidade,
+                telefone: state.telefoneCasa,
+                celular: state.celular
+            })
+                .then((response) => {
+                    message.success('Sucesso ao editar Aula')
+                })
+                .catch((error) => {
+                    message.error('Erro ao editar Aula')
+                })
+        }
+    }
 
     function handleChange(event) {
         const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
@@ -227,7 +318,7 @@ const CadastroAtletas = () => {
                                 </div>
                             </Row>
                         </div>
-                        <hr className={styles.hr}/>
+                        <hr className={styles.hr} />
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
                             <div className={styles.card_inputs} style={{ width: '27.2%' }}>
                                 <Label>Naturalidade</Label>
@@ -292,7 +383,7 @@ const CadastroAtletas = () => {
                                 />
                             </div>
                         </Row>
-                        <hr className={styles.hr}/>
+                        <hr className={styles.hr} />
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
                             <div className={styles.card_inputs} style={{ width: '27.2%' }}>
                                 <Label>Endereço</Label>
@@ -357,9 +448,9 @@ const CadastroAtletas = () => {
                                 />
                             </div>
                         </Row>
-                        <hr className={styles.hr}/>
+                        <hr className={styles.hr} />
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
-                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                            <div className={styles.card_inputs} style={{ width: '42.2%' }}>
                                 <Label>Telefone de Casa</Label>
                                 <Input
                                     className={styles.inputs}
@@ -369,17 +460,7 @@ const CadastroAtletas = () => {
                                     onChange={event => handleChange(event)}
                                 />
                             </div>
-                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
-                                <Label>Telefone do Trabalho</Label>
-                                <Input
-                                    className={styles.inputs}
-                                    type="text"
-                                    name="telefoneTrabalho"
-                                    value={state.telefoneTrabalho}
-                                    onChange={event => handleChange(event)}
-                                />
-                            </div>
-                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                            <div className={styles.card_inputs} style={{ width: '42.2%' }}>
                                 <Label>Celular</Label>
                                 <Input
                                     className={styles.inputs}
@@ -391,7 +472,7 @@ const CadastroAtletas = () => {
                             </div>
                         </Row>
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
-                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                            <div className={styles.card_inputs} style={{ width: '42.2%' }}>
                                 <Label>Mãe</Label>
                                 <Input
                                     className={styles.inputs}
@@ -401,23 +482,13 @@ const CadastroAtletas = () => {
                                     onChange={event => handleChange(event)}
                                 />
                             </div>
-                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
+                            <div className={styles.card_inputs} style={{ width: '42.2%' }}>
                                 <Label>Pai</Label>
                                 <Input
                                     className={styles.inputs}
                                     type="text"
                                     name="pai"
                                     value={state.pai}
-                                    onChange={event => handleChange(event)}
-                                />
-                            </div>
-                            <div className={styles.card_inputs} style={{ width: '27.2%' }}>
-                                <Label>Responsável</Label>
-                                <Input
-                                    className={styles.inputs}
-                                    type="text"
-                                    name="responsavel"
-                                    value={state.responsavel}
                                     onChange={event => handleChange(event)}
                                 />
                             </div>
@@ -437,9 +508,15 @@ const CadastroAtletas = () => {
                         </Row>
                         <Row style={{ marginLeft: '0px', marginRight: '0px', marginBottom: '15px', display: 'flex', justifyContent: 'flex-end', width: '91.5%' }}>
                             <div style={{ marginLeft: '29%' }}>
-                                <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
-                                    Salvar
-                            </Button>
+                                {state.editItem ?
+                                    <Button variant="contained" onClick={() => handleEdit()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+                                        Salvar
+                                    </Button>
+                                    :
+                                    <Button variant="contained" onClick={() => handleSave()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+                                        Salvar
+                                    </Button>
+                                }
                                 <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
                                     Cancelar
                             </Button>
@@ -449,9 +526,8 @@ const CadastroAtletas = () => {
                     </Col>
                 </div>
                 <div className={styles.form_graduacao} style={{ width: '30%' }}>
-                <Label>Graduação</Label>
+                    <Label>Graduação</Label>
                     <div style={{ border: '1px solid #A7A7A7', height: '50%', width: '80%' }}>
-                    
                         <Radio
                             label='Iniciante - Branca'
                             name='graduacao'
@@ -523,4 +599,4 @@ const CadastroAtletas = () => {
     )
 }
 
-export default CadastroAtletas;
+export default withRouter(CadastroAtletas);
