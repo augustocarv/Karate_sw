@@ -1,13 +1,12 @@
 .main{
     width: 100%;
-    overflow-y: scroll;
 }
 .user{
-    width: 100%;
+    width: 84%;
     display: flex;
     justify-content: flex-end;
     height: 50px;
-    padding: 1% 4% 0 0;
+    padding-top: 15px;
 }
 .nameUser{
     margin: 2px 2%;
@@ -17,4 +16,16 @@
     color: #696969;
     padding-left: 4%;
    
+}
+.topbar{
+    position: fixed;
+    width: 100%;
+    z-index: 25;
+    background-color: white;
+}
+
+.main_content{
+    margin-top: 70px;
+    height: 95%;
+    overflow-y: overlay;
 }

@@ -15,3 +15,9 @@ button.MuiButtonBase-root.MuiButton-root.MuiButton-contained{
     width: 150px!important;
     height: 150px!important;
 }
+.MuiPaper-elevation1{
+    box-shadow: none!important;
+}
+.fileContainer{
+    border: 1px solid #e7e7e7!important;
+}

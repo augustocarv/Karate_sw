@@ -1,140 +1,304 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './campeonatos.module.css'
 import { Radio } from 'semantic-ui-react';
 import Button from '@material-ui/core/Button'
 import { Upload, message } from 'antd';
-import { Input, Label, Col, Row, Card, Table } from 'reactstrap';
+import { Input, Label, Col, Row } from 'reactstrap';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
+import Select from 'react-select';
+import { withRouter } from 'react-router-dom'
+import api from '../../../service/api'
 
-const CadastroCampeonatos = () => {
+const colourOptions = [
+  { value: 'chocolate', label: 'Chocolate' },
+  { value: 'strawberry', label: 'Strawberry2' },
+  { value: 'strawberry2', label: 'Strawberry3' },
+  { value: 'strawberry3', label: 'Strawberry4' },
+  { value: 'strawberry4', label: 'Strawberry5' },
+  { value: 'strawberry5', label: 'Strawberry6' },
+  { value: 'strawberry6', label: 'Strawberry7' },
+  { value: 'strawberry7', label: 'Strawberry8' },
+  { value: 'strawberry8', label: 'Strawberry9' },
+  { value: 'strawberry6456', label: 'Strawberry11' },
+  { value: 'strawberry456', label: 'Strawberry12' },
+  { value: 'strawberry73', label: 'Strawberry123' },
+  { value: 'strawberry34', label: 'Strawberry12' },
+  { value: 'strawberry123', label: 'Strawberry5215' },
+  { value: 'vanilla', label: 'Vanilla' }
+]
+
+const initialState = {
+  nome: '',
+  premiacao: '',
+  estilo: '',
+  data: '',
+  modalidade: '',
+  arbitros: [],
+  atletas: [],
+  chave: '8',
+  editItem: false,
+}
+const CadastroCampeonatos = (props) => {
+  const [state, setState] = useState(
+    {
+      nome: '',
+      premiacao: '',
+      estilo: '',
+      data: '',
+      modalidade: '',
+      arbitros: [],
+      atletas: [],
+      chave: '8',
+      editItem: false,
+
+    }
+  )
+  useEffect(() => {
+    if (props.location.state) {
+      setState({
+        nome: props.location.state.nome,
+        premiacao: props.location.state.premiacao,
+        data: new Date(props.location.state.data),
+        modalidade: props.location.state.modalidade,
+        arbitros: props.location.state.arbitros,
+        atletas: props.location.state.atletas,
+        chave: props.location.state.chave,
+        editItem: true
+      })
+    }
+    console.log(state)
+  }, [props, state])
+
+  function handleSave() {
+    api.post('api/atletas', {
+      nome: state.turma,
+      rua: state.endereco,
+      bairro: state.bairro,
+      cep: state.cep,
+      estado: state.estado,
+      cidade: state.cidade,
+      dataInicial: state.dataInicio,
+      dataFinal: state.dataFinal,
+      modalidadeId: state.modalidade,
+      atletas: state.atletasAula
+    })
+      .then((response) => {
+        message.success('Sucesso ao gravar Aula')
+      })
+      .catch((error) => {
+        message.error('Erro ao gravar Aula')
+      })
+  }
+  function handleEdit() {
+    if (props.location.state) {
+      api.post('api/atletas', {
+        id: props.location.state.id,
+        nome: state.turma,
+        rua: state.endereco,
+        bairro: state.bairro,
+        cep: state.cep,
+        estado: state.estado,
+        cidade: state.cidade,
+        dataInicial: state.dataInicio,
+        dataFinal: state.dataFinal,
+        modalidadeId: state.modalidade,
+        atletas: state.atletasAula
+      })
+        .then((response) => {
+          message.success('Sucesso ao editar Aula')
+        })
+        .catch((error) => {
+          message.error('Erro ao editar Aula')
+        })
+    }
+  }
+  function handleChange(event) {
+    const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+    setState({
+      ...state,
+      [event.target.name]: value
+    });
+  }
+  function setArbitros(event, option) {
+    if (event !== null) {
+      event.map((item) => {
+        if (option.action === "select-option") {
+          setState({
+            ...state,
+            arbitros:
+              [
+                ...state.arbitros,
+                {
+                  value: item.value,
+                  label: item.label
+                }
+              ]
+          })
+        }
+        else if (option.action === "remove-value" || option.action === "pop-value") {
+          const data = state.arbitros.filter(opt => opt.label !== option.removedValue.label)
+          setState({
+            ...state,
+            arbitros:
+              [
+                ...data
+              ]
+          })
+        }
+
+      })
+    }
+
+  }
+  function setAlunos(event, option) {
+    if (event !== null) {
+      event.map((item) => {
+        if (option.action === "select-option") {
+          setState({
+            ...state,
+            atletas:
+              [
+                ...state.atletas,
+                {
+                  value: item.value,
+                  label: item.label
+                }
+              ]
+          })
+        }
+        else if (option.action === "remove-value" || option.action === "pop-value") {
+          const data = state.atletas.filter(opt => opt.label !== option.removedValue.label)
+          setState({
+            ...state,
+            atletas:
+              [
+                ...data
+              ]
+          })
+        }
+
+      })
+    }
+
+  }
+
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>
-        Novo Campeonato
-    </div>
-      <Col sm='12'>
-        <Card>
-          <Row style={{ margin: '0px 0px 0px 28px' }}>
-            <div className={styles.card_inputs} style={{ width: '20%' }}>
-              <Label>Vincular</Label>
-              <Input type="select" name="vincular" className={styles.inputs}
-              // value={state.vincular} onChange={event => handleChange(event)}
-              >
-                <option>Selecione</option>
-                <option value='Arbitro'>Árbitro</option>
-                <option value='Atleta'>Atleta</option>
-              </Input>
+        Novo Cadastro
             </div>
-            <div className={styles.card_inputs} style={{ width: '30%' }}>
-              <label>Nome</label>
-              <Input type="select" name="nome" className={styles.inputs}
-              // value={state.nome} onChange={event => handleChange(event)}
-              >
-                <option>Nome</option>
-                <option value='João'>João</option>
-              </Input>
-            </div>
-            <div>
-              <Button variant="contained"
-                style={{
-                  margin: '20px 0 0 10px',
-                  textTransform: 'capitalize',
-                  backgroundColor: '#fc9643'
-                }}
-                color="primary">
-                + adicionar
-              </Button>
-            </div>
-          </Row>
-          <Table bordered style={{ margin: '20px 0' }}>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Nascimento</th>
-                <th>Matrícula</th>
-                <th>Kyo</th>
-                <th>Vincular</th>
-              </tr>
-            </thead>
-            <tbody>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tbody>
-          </Table>
-        </Card>
-      </Col>
-      <Row style={{ margin: '10px 0px 0px 0px' }}>
-        <Col sm='4'>
-          <Card>
-            <label style={{ margin: '5px auto' }}>Árbitros</label>
-          </Card>
-        </Col>
-        <Col sm='4'>
-          <div className={styles.card_inputs} style={{ width: '100%' }}>
-            <label style={{ margin: '2px auto' }}>Nome</label>
-            <Input
-              className={styles.inputs}
-              style={{ width: '100%' }}
-              type="text"
-              name="nome"
-            // value={state.nome}
-            // onChange={event => handleChange(event)}
-            />
-          </div>
-          <div className={styles.card_inputs} style={{ width: '100%' }}>
-            <label style={{ margin: '2px auto' }}>Premiação</label>
-            <Input
-              className={styles.inputs}
-              style={{ width: '100%' }}
-              type="text"
-              name="premiacao"
-            // value={state.premiacao}
-            // onChange={event => handleChange(event)}
-            />
-          </div>
-          <div className={styles.card_inputs} style={{ width: '100%' }}>
-            <label style={{ margin: '2px auto' }}>Estilo Competição</label>
-            <Input
-              className={styles.inputs}
-              style={{ width: '100%' }}
-              type="text"
-              name="estilo"
-            // value={state.estilo}
-            // onChange={event => handleChange(event)}
-            />
-          </div>
-          <div className={styles.card_inputs} style={{ width: '100%' }}>
-            <label style={{ margin: '2px auto' }}>Modalidade</label>
-            <Input
-              className={styles.inputs}
-              style={{ width: '100%' }}
-              type="text"
-              name="modalidade"
-            // value={state.modalidade}
-            // onChange={event => handleChange(event)}
-            />
-          </div>
-        </Col>
-        <Col sm='4'>
-          <Card>
-            <label style={{ margin: '5px auto' }}>Atletas</label>
-          </Card>
-        </Col>
+      <Row style={{ margin: '0px 0px 0px 28px' }}>
+        <div className={styles.card_inputs} style={{ width: '46.1%' }}>
+          <label>Árbitros</label>
+          <Select
+            isMulti
+            name="atletasAula"
+            options={colourOptions}
+            onChange={(event, options) => setArbitros(event, options)}
+            className="basic-multi-select"
+            classNamePrefix="select"
+          />
+        </div>
+        <div className={styles.card_inputs} style={{ width: '46.1%' }}>
+          <label>Atletas</label>
+          <Select
+            isMulti
+            name="atletas"
+            options={colourOptions}
+            onChange={(event, options) => setAlunos(event, options)}
+            className="basic-multi-select"
+            classNamePrefix="select"
+          />
+        </div>
       </Row>
+      <hr className={styles.hr} />
+      <Row style={{ margin: '0px 0px 0px 28px' }}>
+        <div className={styles.card_inputs} style={{ width: '30%' }}>
+          <label>Nome</label>
+          <Input
+            className={styles.inputs}
+            style={{ width: '100%' }}
+            type="text"
+            name="nome"
+            value={state.nome}
+            onChange={event => handleChange(event)}
+          />
+        </div>
+        <div className={styles.card_inputs} style={{ width: '30%' }}>
+          <label>Premiação</label>
+          <Input
+            className={styles.inputs}
+            style={{ width: '100%' }}
+            type="text"
+            name="premiacao"
+            value={state.premiacao}
+            onChange={event => handleChange(event)}
+          />
+        </div>
+        <div className={styles.card_inputs} style={{ width: '30%' }}>
+          <label>Estilo</label>
+          <Input
+            className={styles.inputs}
+            style={{ width: '100%' }}
+            type="text"
+            name="estilo"
+            value={state.estilo}
+            onChange={event => handleChange(event)}
+          />
+        </div>
+      </Row>
+      <hr className={styles.hr} />
+      <Row style={{ margin: '0px 0px 0px 28px' }}>
+        <div className={styles.card_inputs} style={{ width: '30%' }}>
+          <label>Modalidade</label>
+          <Input
+            className={styles.inputs}
+            style={{ width: '100%' }}
+            type="text"
+            name="modalidade"
+            value={state.modalidade}
+            onChange={event => handleChange(event)}
+          />
+        </div>
+        <div className={styles.card_inputs} style={{ width: '30%' }}>
+          <label>Data</label>
+          <Input
+            className={styles.inputs}
+            style={{ width: '100%' }}
+            type="date"
+            name="data"
+            value={state.data}
+            onChange={event => handleChange(event)}
+          />
+        </div>
+        <div className={styles.card_inputs} style={{ width: '30%' }}>
+          <label>Chave</label>
+          <Input type="select" name="chave" className={styles.inputs} value={state.chave} onChange={event => handleChange(event)}>
+            <option>Selecione</option>
+            <option value='8'>8</option>
+            <option value='16'>16</option>
+          </Input>
+        </div>
+      </Row>
+      <hr className={styles.hr} />
       <Row style={{ margin: '20px 48px 0px 0px', display: 'flex', justifyContent: 'flex-end' }}>
-        <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
-          Salvar
-        </Button>
-        <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
+        {state.editItem ?
+          <Button variant="contained" onClick={() => handleEdit()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+            Salvar
+                </Button>
+          :
+          <Button variant="contained" onClick={() => handleSave()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+            Salvar
+                </Button>
+        }
+        <Button variant="contained" onClick={() => setState({ ...initialState })} style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
           Cancelar
-        </Button>
+                </Button>
       </Row>
     </div>
   )
 }
 
-export default CadastroCampeonatos;
+export default withRouter(CadastroCampeonatos);

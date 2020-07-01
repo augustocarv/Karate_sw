@@ -5,16 +5,20 @@ import Dropdown from './utilities/dropdown'
 const ComponentMain = (props) => {
     return (
         <div className={styles.main}>
-            <div className={styles.user}>
-                <div className={styles.nameUser}>
-                    Luiz Augusto Barros de Carvalho
+            <div className={styles.topbar}>
+                <div className={styles.user}>
+                    <div className={styles.nameUser}>
+                        Luiz Augusto Barros de Carvalho
                </div>
-                <Dropdown />
+                    <Dropdown />
+                </div>
+                <div className={styles.title}>
+                    {props.title}
+                </div>
             </div>
-            <div className={styles.title}>
-                {props.title}
+            <div className={styles.main_content}>
+                {props.children}
             </div>
-            {props.children}
         </div>
     )
 }

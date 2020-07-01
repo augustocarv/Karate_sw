@@ -1,14 +1,19 @@
-.inputs{
-    height: 35px;
-   color: #636363;
-}
-.card_inputs{
-    margin: 0 13px 0 13px;
+.top_form{
     display: flex;
-    flex-direction: column;
 }
-.container{
-    margin: 10px;
+.radio{
+    display: flex;
+    
+}
+.radio_funcao{
+    padding: 20px;
+    font-size: 13px;
+}
+.graduacao{
+    padding: 10px;
+}
+.content_form{
+    display: flex;
 }
 .hr{
     color: black;
@@ -17,10 +22,30 @@
     margin: 20px 0 20px 20px;
 }
 .title{
-    padding: 27px 27px 27px 41px;
+    padding: 27px 27px 27px 52px;
     font-size: 15px;
 }
+input[type=radio]{
+    margin: 10px 5px 5px 5px!important;
+    outline: none;
+}
+input[type=radio]:checked{
+    background-color: red!important;
+}
 
+.card_inputs{
+    margin: 0 13px 0 13px;
+    display: flex;
+    flex-direction: column;
+}
+.inputs{
+    height: 35px;
+   color: #636363;
+}
+.inputs:focus{
+    box-shadow: none;
+    border: 1px solid rgb(252, 150, 67);
+}
 .btn_salvar{
     width: 8%;
     min-width: 74px!important;

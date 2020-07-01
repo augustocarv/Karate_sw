@@ -12,27 +12,27 @@ import api from '../../../service/api'
 
 const colourOptions = [
     { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'strawberry2', label: 'Strawberry' },
-    { value: 'strawberry3', label: 'Strawberry' },
-    { value: 'strawberry4', label: 'Strawberry' },
-    { value: 'strawberry5', label: 'Strawberry' },
-    { value: 'strawberry6', label: 'Strawberry' },
-    { value: 'strawberry7', label: 'Strawberry' },
-    { value: 'strawberry8', label: 'Strawberry' },
-    { value: 'strawberry6456', label: 'Strawberry' },
-    { value: 'strawberry456', label: 'Strawberry' },
-    { value: 'strawberry73', label: 'Strawberry' },
-    { value: 'strawberry34', label: 'Strawberry' },
-    { value: 'strawberry123', label: 'Strawberry' },
+    { value: 'strawberry', label: 'Strawberry2' },
+    { value: 'strawberry2', label: 'Strawberry3' },
+    { value: 'strawberry3', label: 'Strawberry4' },
+    { value: 'strawberry4', label: 'Strawberry5' },
+    { value: 'strawberry5', label: 'Strawberry6' },
+    { value: 'strawberry6', label: 'Strawberry7' },
+    { value: 'strawberry7', label: 'Strawberry8' },
+    { value: 'strawberry8', label: 'Strawberry9' },
+    { value: 'strawberry6456', label: 'Strawberry11' },
+    { value: 'strawberry456', label: 'Strawberry12' },
+    { value: 'strawberry73', label: 'Strawberry123' },
+    { value: 'strawberry34', label: 'Strawberry12' },
+    { value: 'strawberry123', label: 'Strawberry5215' },
     { value: 'vanilla', label: 'Vanilla' }
-  ]
+]
 
 const initialState = {
     turma: '',
-    estilo: '',
-    dataInicio: new Date(),
-    dataFinal: new Date(),
+    modalidade: 0,
+    dataInicio: '',
+    dataFinal: '',
     endereco: '',
     bairro: '',
     complemento: '',
@@ -46,9 +46,9 @@ const CadastroAulasFreq = (props) => {
     const [state, setState] = useState(
         {
             turma: '',
-            estilo: '',
-            dataInicio: new Date(),
-            dataFinal: new Date(),
+            modalidade: '',
+            dataInicio: '',
+            dataFinal: '',
             endereco: '',
             bairro: '',
             complemento: '',
@@ -65,8 +65,8 @@ const CadastroAulasFreq = (props) => {
             setState({
                 turma: props.location.state.nome,
                 estilo: props.location.state.modalidadeId,
-                dataInicio: new Date(props.location.state.dataInicio),
-                dataFinal: new Date(props.location.state.dataFinal),
+                dataInicio: props.location.state.dataInicio,
+                dataFinal: props.location.state.dataFinal,
                 endereco: props.location.state.rua,
                 bairro: props.location.state.bairro,
                 cep: props.location.state.cep,
@@ -76,7 +76,7 @@ const CadastroAulasFreq = (props) => {
                 editItem: true
             })
         }
-    }, [props])
+    }, [props, state])
 
     function handleSave() {
         api.post('api/atletas', {
@@ -127,6 +127,37 @@ const CadastroAulasFreq = (props) => {
             ...state,
             [event.target.name]: value
         });
+    }
+    function setAtletas(event, option) {
+        if (event !== null) {
+            event.map((item) => {
+                if (option.action === "select-option") {
+                    setState({
+                        ...state,
+                        atletasAula:
+                            [
+                                ...state.atletasAula,
+                                {
+                                    value: item.value,
+                                    label: item.label
+                                }
+                            ]
+                    })
+                }
+                else if (option.action === "remove-value" || option.action === "pop-value") {
+                    const data = state.atletasAula.filter(opt => opt.label !== option.removedValue.label)
+                    setState({
+                        ...state,
+                        atletasAula:
+                            [
+                                ...data
+                            ]
+                    })
+                }
+
+            })
+        }
+
     }
 
 
@@ -251,8 +282,7 @@ const CadastroAulasFreq = (props) => {
                         isMulti
                         name="atletasAula"
                         options={colourOptions}
-                        value={state.atletasAula}
-                        onChange={event => handleChange(event)}
+                        onChange={(event, options) => setAtletas(event, options)}
                         className="basic-multi-select"
                         classNamePrefix="select"
                     />
@@ -260,10 +290,10 @@ const CadastroAulasFreq = (props) => {
                 <div className={styles.card_inputs} style={{ width: '46.1%' }}>
                     <label>Modalidade</label>
                     <Select
-                        name="estilo"
-                        options={colourOptions}
-                        value={state.estilo}
-                        onChange={event => handleChange(event)}
+                        name="modalidade"
+                        options={[{ value: 0, label: 'Karate' }, { value: 1, label: 'Judô' }]}
+                        defaultValue={{ value: state.modalidade }}
+                        onChange={event => setState({ ...state, modalidade: event.value })}
                         className="basic-multi-select"
                         classNamePrefix="select"
                     />
@@ -273,11 +303,11 @@ const CadastroAulasFreq = (props) => {
             <Row style={{ margin: '20px 48px 0px 0px', display: 'flex', justifyContent: 'flex-end' }}>
                 {state.editItem ?
                     <Button variant="contained" onClick={() => handleEdit()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
-                        Salvar
+                        Ver Tabela  
                 </Button>
                     :
-                    <Button variant="contained" onClick={() => handleSave()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
-                        Salvar
+                    <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+                        Gerar
                 </Button>
                 }
                 <Button variant="contained" onClick={() => setState({ ...initialState })} style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
