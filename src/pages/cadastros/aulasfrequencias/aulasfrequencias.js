@@ -6,9 +6,11 @@ import { Upload, message } from 'antd';
 import { Input, Label, Col, Row } from 'reactstrap';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
+import MaskedInput from 'react-text-mask'
 import Select from 'react-select';
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom'
 import api from '../../../service/api'
+import moment from 'moment'
 
 const colourOptions = [
     { value: 'chocolate', label: 'Chocolate' },
@@ -29,65 +31,58 @@ const colourOptions = [
 ]
 
 const initialState = {
-    turma: '',
-    modalidade: 0,
+    nome: '',
+    modalidade: '',
     dataInicio: '',
     dataFinal: '',
-    endereco: '',
+    rua: '',
     bairro: '',
     complemento: '',
     cep: '',
     estado: '',
     cidade: '',
-    atletasAula: [],
+    atletas: [],
     editItem: false,
 }
 const CadastroAulasFreq = (props) => {
     const [state, setState] = useState(
         {
-            turma: '',
+            nome: '',
+            modalidades: [],
             modalidade: '',
             dataInicio: '',
             dataFinal: '',
-            endereco: '',
+            rua: '',
             bairro: '',
             complemento: '',
             cep: '',
             estado: '',
             cidade: '',
+            atletas: [],
             atletasAula: [],
             editItem: false,
+            loading: false,
 
         }
     )
+
+
+
+
     useEffect(() => {
-        if (props.location.state) {
-            setState({
-                turma: props.location.state.nome,
-                estilo: props.location.state.modalidadeId,
-                dataInicio: props.location.state.dataInicio,
-                dataFinal: props.location.state.dataFinal,
-                endereco: props.location.state.rua,
-                bairro: props.location.state.bairro,
-                cep: props.location.state.cep,
-                estado: props.location.state.estado,
-                cidade: props.location.state.cidade,
-                atletasAula: props.location.state.atletas,
-                editItem: true
-            })
-        }
-    }, [props, state])
+        refreshList()
+    }, [props])
 
     function handleSave() {
-        api.post('api/atletas', {
-            nome: state.turma,
-            rua: state.endereco,
+        api.post('api/aula', {
+            nome: state.nome,
+            rua: state.rua,
             bairro: state.bairro,
             cep: state.cep,
             estado: state.estado,
             cidade: state.cidade,
-            dataInicial: state.dataInicio,
-            dataFinal: state.dataFinal,
+            dataInicial: moment(state.dataInicio).format(),
+            dataFinal: moment(state.dataFinal).format(),
             modalidadeId: state.modalidade,
             atletas: state.atletasAula
         })
@@ -95,21 +90,57 @@ const CadastroAulasFreq = (props) => {
                 message.success('Sucesso ao gravar Aula')
             })
             .catch((error) => {
-                message.error('Erro ao gravar Aula')
+                message.warning('Erro ao gravar Aula')
             })
     }
+    async function refreshList() {
+        const arrayAux = []
+        const arrayModalidade = []
+        await api.get('api/modalidade').then(async (response) => { await response.data.map((item) => { arrayModalidade.push({ value: item.id, label: item.nome }) }) })
+        await api.get('api/atleta').then(async (response) => { await response.data.map(async (item) => { arrayAux.push({ value: item.id, label: item.nome }) }) })
+
+        if (props.location.state) {
+            const arrayAuxLocation = []
+            console.log(props.location.state)
+            await props.location.state.atletas.map((item) => {
+                return arrayAuxLocation.push({
+                    atletaId: item.atletaId
+                })
+            })
+            await setState({
+                nome: props.location.state.nome,
+                modalidades: arrayModalidade,
+                modalidade: props.location.state.modalidadeId,
+                dataInicio: props.location.state.dataInicial,
+                dataFinal: props.location.state.dataFinal,
+                rua: props.location.state.rua,
+                bairro: props.location.state.bairro,
+                cep: props.location.state.cep,
+                estado: props.location.state.estado,
+                cidade: props.location.state.cidade,
+                atletas: arrayAux,
+                atletasAula: arrayAuxLocation,
+                editItem: true
+            })
+
+        } else {
+            setState({ ...state, modalidades: arrayModalidade, atletas: arrayAux })
+        }
+
+    }
+    console.log(state)
     function handleEdit() {
         if (props.location.state) {
-            api.post('api/atletas', {
+            api.post('api/aula', {
                 id: props.location.state.id,
-                nome: state.turma,
-                rua: state.endereco,
+                nome: state.nome,
+                rua: state.rua,
                 bairro: state.bairro,
                 cep: state.cep,
                 estado: state.estado,
                 cidade: state.cidade,
-                dataInicial: state.dataInicio,
-                dataFinal: state.dataFinal,
+                dataInicial: moment(state.dataInicio).format(),
+                dataFinal: moment(state.dataFinal).format(),
                 modalidadeId: state.modalidade,
                 atletas: state.atletasAula
             })
@@ -117,7 +148,7 @@ const CadastroAulasFreq = (props) => {
                     message.success('Sucesso ao editar Aula')
                 })
                 .catch((error) => {
-                    message.error('Erro ao editar Aula')
+                    message.warning('Erro ao editar Aula')
                 })
         }
     }
@@ -128,7 +159,19 @@ const CadastroAulasFreq = (props) => {
             [event.target.name]: value
         });
     }
+    function DesMask(e, nome) {
+        switch (nome) {
+            case 'cep':
+                let cep = e.target.value
+                cep = cep.replace('-', "")
+                setState({ ...state, cep: cep })
+                break;
+            default:
+                break;
+        }
+    }
     function setAtletas(event, option) {
+        console.log(event)
         if (event !== null) {
             event.map((item) => {
                 if (option.action === "select-option") {
@@ -138,29 +181,50 @@ const CadastroAulasFreq = (props) => {
                             [
                                 ...state.atletasAula,
                                 {
-                                    value: item.value,
-                                    label: item.label
+                                    atletaId: item.value
                                 }
                             ]
                     })
                 }
-                else if (option.action === "remove-value" || option.action === "pop-value") {
-                    const data = state.atletasAula.filter(opt => opt.label !== option.removedValue.label)
-                    setState({
-                        ...state,
-                        atletasAula:
-                            [
-                                ...data
-                            ]
-                    })
+                if (option.action === "remove-value") {
+                    const data = state.atletasAula.filter(opt => opt.value !== option.removedValue.value)
+
+                    if (state.atletasAula.length > 1) {
+                        setState({
+                            ...state,
+                            atletasAula:
+                                [
+                                    ...data
+                                ]
+                        })
+                    }
                 }
 
             })
         }
+        if (event === null) {
+            const arrayAux = []
+            setState({
+                ...state,
+                atletasAula: arrayAux
+            })
+        }
 
     }
-
-
+    const setDefault = () => {
+        const arrayAux = []
+        state.atletas.filter(item1 => {
+            state.atletasAula.filter(item2 => {
+                if (item1.value === item2.atletaId) {
+                    arrayAux.push({
+                        value: item2.atletaId,
+                        label: item1.label,
+                    })
+                }
+            })
+        })
+        return arrayAux
+    }
     return (
         <div className={styles.container}>
             <div className={styles.title}>
@@ -173,8 +237,8 @@ const CadastroAulasFreq = (props) => {
                         className={styles.inputs}
                         style={{ width: '100%' }}
                         type="text"
-                        name="turma"
-                        value={state.turma}
+                        name="nome"
+                        value={state.nome}
                         onChange={event => handleChange(event)}
                     />
                 </div>
@@ -195,7 +259,8 @@ const CadastroAulasFreq = (props) => {
                     <Input
                         className={styles.inputs}
                         style={{ width: '100%' }}
-                        type="date"
+                        type="datetime-local"
+                        step="1800"
                         name="dataFinal"
                         value={state.dataFinal}
                         onChange={event => handleChange(event)}
@@ -206,14 +271,14 @@ const CadastroAulasFreq = (props) => {
             <Row style={{ margin: '0px 0px 0px 28px' }}>
                 <div className={styles.card_inputs} style={{ width: '30%' }}>
                     <label>CEP</label>
-                    <Input
-                        className={styles.inputs}
-                        style={{ width: '100%' }}
+                    <MaskedInput
+                        mask={[/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/]}
                         type="text"
-                        name="cep"
+                        name='cep'
+                        className={`form-control ${styles.inputs}`}
+                        keepCharPositions='true'
                         value={state.cep}
-                        onChange={event => handleChange(event)}
-                    />
+                        onChange={e => DesMask(e, 'cep')} />
                 </div>
                 <div className={styles.card_inputs} style={{ width: '30%' }}>
                     <label>Cidade</label>
@@ -246,8 +311,8 @@ const CadastroAulasFreq = (props) => {
                         className={styles.inputs}
                         style={{ width: '100%' }}
                         type="text"
-                        name="endereco"
-                        value={state.endereco}
+                        name="rua"
+                        value={state.rua}
                         onChange={event => handleChange(event)}
                     />
                 </div>
@@ -280,8 +345,9 @@ const CadastroAulasFreq = (props) => {
                     <label>Atletas</label>
                     <Select
                         isMulti
-                        name="atletasAula"
-                        options={colourOptions}
+                        name="atletas"
+                        options={state.atletas}
+                        value={setDefault()}
                         onChange={(event, options) => setAtletas(event, options)}
                         className="basic-multi-select"
                         classNamePrefix="select"
@@ -291,8 +357,8 @@ const CadastroAulasFreq = (props) => {
                     <label>Modalidade</label>
                     <Select
                         name="modalidade"
-                        options={[{ value: 0, label: 'Karate' }, { value: 1, label: 'Judô' }]}
-                        defaultValue={{ value: state.modalidade }}
+                        options={state.modalidades}
+                        value={state.modalidades.filter(option => option.value === state.modalidade)}
                         onChange={event => setState({ ...state, modalidade: event.value })}
                         className="basic-multi-select"
                         classNamePrefix="select"
@@ -303,16 +369,18 @@ const CadastroAulasFreq = (props) => {
             <Row style={{ margin: '20px 48px 0px 0px', display: 'flex', justifyContent: 'flex-end' }}>
                 {state.editItem ?
                     <Button variant="contained" onClick={() => handleEdit()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
-                        Ver Tabela  
+                        Editar
                 </Button>
                     :
-                    <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
-                        Gerar
+                    <Button variant="contained" onClick={() => handleSave()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+                        Salvar
                 </Button>
                 }
-                <Button variant="contained" onClick={() => setState({ ...initialState })} style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
-                    Cancelar
+                <Link to='/AulasFrequencias'>
+                    <Button variant="contained" onClick={() => setState({ ...initialState })} style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
+                        Cancelar
                 </Button>
+                </Link>
             </Row>
         </div>
     )

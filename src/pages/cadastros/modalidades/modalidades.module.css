@@ -1,0 +1,32 @@
+.form{
+    width: 100%;
+}
+
+.content_form{
+    display: flex;
+    width: 100%;
+}
+.title{
+    padding: 27px 27px 27px 52px;
+    font-size: 15px;
+}
+
+.card_inputs{
+    margin: 0 13px 0 13px;
+    display: flex;
+    flex-direction: column;
+}
+.inputs{
+    height: 35px;
+   color: #636363;
+}
+.inputs:focus{
+    box-shadow: none;
+    border: 1px solid rgb(252, 150, 67);
+}
+.btn_salvar{
+    width: 8%;
+    min-width: 74px!important;
+    margin: 10px!important;
+
+}

@@ -3,43 +3,41 @@ import styles from './atletas.module.css'
 import { Radio } from 'semantic-ui-react';
 import Button from '@material-ui/core/Button'
 import { Upload, message } from 'antd';
+import moment from 'moment'
 import { Input, Label, Col, Row } from 'reactstrap';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom'
+import MaskedInput from 'react-text-mask'
 import api from '../../../service/api'
 
 
 const CadastroAtletas = (props) => {
     const [state, setState] = useState(
         {
-            funcao: 0,
+            tipoAtleta: '',
             imagem: '',
             nome: '',
             matricula: '',
-            dataInicio: new Date(),
+            dataInicio: '',
             nomeSocial: '',
             genero: '',
-            dataNascimento: new Date(),
+            dataNascimento: '',
             naturalidade: '',
             nacionalidade: '',
             profissao: '',
             email: '',
             cpf: '',
             rg: '',
-            endereco: '',
+            rua: '',
             bairro: '',
             cep: '',
             estado: '',
             cidade: '',
-            telefoneCasa: '',
-            telefoneTrabalho: '',
+            telefone: '',
             celular: '',
-            mae: '',
-            pai: '',
-            responsavel: '',
             informacoesAdicionais: '',
-            graduacao: 0,
+            graduacao: '',
             complemento: '',
             editItem: false,
             loading: false
@@ -47,90 +45,135 @@ const CadastroAtletas = (props) => {
         }
     )
     useEffect(() => {
+        console.log(state)
+        console.log(props.location.state)
         if (props.location.state) {
+            console.log(moment(props.location.state.dataNascimento).format('YYYY-MM-DD'))
             setState({
                 imagem: props.location.state.imagem,
                 nome: props.location.state.nome,
                 naturalidade: props.location.state.naturalidade,
                 nacionalidade: props.location.state.nacionalidade,
                 profissao: props.location.state.profissao,
-                tipoAtleta: props.location.state.funcao,
+                tipoAtleta: props.location.state.tipoAtleta,
                 graduacao: props.location.state.graduacao,
-                dataInicio: new Date(props.location.state.dataInicio),
-                dataNascimento: new Date(props.location.state.dataNascimento),
+                dataInicio: moment(props.location.state.dataInicio).format('YYYY-MM-DD'),
+                dataNascimento: moment(props.location.state.dataNascimento).format('YYYY-MM-DD'),
                 email: props.location.state.email,
                 cpf: props.location.state.cpf,
                 rg: props.location.state.rg,
-                rua: props.location.state.endereco,
+                rua: props.location.state.rua,
                 bairro: props.location.state.bairro,
                 cep: props.location.state.cep,
                 estado: props.location.state.estado,
                 cidade: props.location.state.cidade,
-                telefone: props.location.state.telefoneCasa,
+                telefone: props.location.state.telefone,
                 celular: props.location.state.celular,
                 editItem: true
             })
         }
-    }, [props])
+    }, [])
+
+    function DesMask(e, nome) {
+        switch (nome) {
+            case 'cpf':
+                let cpf = e.target.value
+                cpf = cpf.replace('.', "")
+                cpf = cpf.replace('.', "")
+                cpf = cpf.replace('-', "")
+                setState({ ...state, cpf: cpf })
+                break;
+            case 'cep':
+                let cep = e.target.value
+                cep = cep.replace('-', "")
+                setState({ ...state, cep: cep })
+                break;
+            case 'telefone':
+                let telefone = e.target.value
+                telefone = telefone.replace('(', "")
+                telefone = telefone.replace(')', "")
+                telefone = telefone.replace('-', "")
+                setState({ ...state, telefoneCasa: telefone })
+                break;
+            case 'celular':
+                let celular = e.target.value
+                celular = celular.replace('(', "")
+                celular = celular.replace(')', "")
+                celular = celular.replace('-', "")
+                setState({ ...state, celular: celular })
+                break;
+            default:
+                break;
+        }
+    }
 
     function handleSave() {
-        api.post('api/atletas', {
-            imagem: state.imagem,
-            nome: state.nome,
-            naturalidade: state.naturalidade,
-            nacionalidade: state.nacionalidade,
-            profissao: state.profissao,
-            tipoAtleta: state.funcao,
-            graduacao: state.graduacao,
-            dataInicio: state.dataInicio,
-            dataNascimento: state.dataNascimento,
-            email: state.email,
-            cpf: state.cpf,
-            rg: state.rg,
-            rua: state.endereco,
-            bairro: state.bairro,
-            cep: state.cep,
-            estado: state.estado,
-            cidade: state.cidade,
-            telefone: state.telefoneCasa,
-            celular: state.celular
+        api.post('api/atleta', {
+            // imagem: state.imagem,
+            "nome": state.nome,
+            "naturalidade": state.naturalidade,
+            "nacionalidade": state.nacionalidade,
+            "profissao": state.profissao,
+            "tipoAtleta": state.tipoAtleta,
+            "graduacao": state.graduacao,
+            "dataInicio": moment(state.dataInicio).format('YYYY-MM-DD'),
+            "dataNascimento": moment(state.dataNascimento).format('YYYY-MM-DD'),
+            "email": state.email,
+            "rua": state.rua,
+            "cpf": state.cpf,
+            "rg": state.rg,
+            "bairro": state.bairro,
+            "cep": state.cep,
+            "estado": state.estado,
+            "cidade": state.cidade,
+            "telefone": state.telefone,
+            "celular": state.celular
         })
             .then((response) => {
                 message.success('Sucesso ao gravar Atleta')
+                props.history.push({
+                    pathname: '/Atletas'
+                })
+
             })
             .catch((error) => {
-                message.error('Erro ao gravar Atleta')
+                error.response.data.map((item) => {
+                    message.error(item.Message)
+                })
             })
     }
     function handleEdit() {
         if (props.location.state) {
-            api.post('api/atletas', {
+            api.put('api/atleta', {
                 id: props.location.state.id,
-                imagem: state.imagem,
-                nome: state.nome,
-                naturalidade: state.naturalidade,
-                nacionalidade: state.nacionalidade,
-                profissao: state.profissao,
-                tipoAtleta: state.funcao,
-                graduacao: state.graduacao,
-                dataInicio: state.dataInicio,
-                dataNascimento: state.dataNascimento,
-                email: state.email,
-                cpf: state.cpf,
-                rg: state.rg,
-                rua: state.endereco,
-                bairro: state.bairro,
-                cep: state.cep,
-                estado: state.estado,
-                cidade: state.cidade,
-                telefone: state.telefoneCasa,
-                celular: state.celular
+                // imagem: state.imagem,
+                "nome": state.nome,
+                "naturalidade": state.naturalidade,
+                "nacionalidade": state.nacionalidade,
+                "profissao": state.profissao,
+                "tipoAtleta": state.tipoAtleta,
+                "graduacao": state.graduacao,
+                "dataInicio": moment(state.dataInicio).format('YYYY-MM-DD'),
+                "dataNascimento": moment(state.dataNascimento).format('YYYY-MM-DD'),
+                "email": state.email,
+                "rua": state.rua,
+                "cpf": state.cpf,
+                "rg": state.rg,
+                "bairro": state.bairro,
+                "cep": state.cep,
+                "estado": state.estado,
+                "cidade": state.cidade,
+                "telefone": state.telefone,
+                "celular": state.celular
             })
                 .then((response) => {
-                    message.success('Sucesso ao editar Aula')
+                    message.success('Sucesso ao editar Atleta')
+                    props.history.push({
+                        pathname: '/Atletas'
+                    })
                 })
                 .catch((error) => {
-                    message.error('Erro ao editar Aula')
+                    message.warning('Erro ao editar Atleta')
                 })
         }
     }
@@ -194,41 +237,41 @@ const CadastroAtletas = (props) => {
                 <div className={styles.radio}>
                     <Radio
                         label='Aluno'
-                        name='funcao'
+                        name='tipoAtleta'
                         value='Aluno'
-                        checked={state.funcao === 'Aluno'}
+                        checked={state.tipoAtleta === 'Aluno'}
                         onChange={event => handleChange(event)}
                         className={styles.radio_funcao}
                     />
                     <Radio
                         label='Monitor'
-                        name='funcao'
+                        name='tipoAtleta'
                         value='Monitor'
-                        checked={state.funcao === 'Monitor'}
+                        checked={state.tipoAtleta === 'Monitor'}
                         onChange={event => handleChange(event)}
                         className={styles.radio_funcao}
                     />
                     <Radio
                         label='Instrutor'
-                        name='funcao'
+                        name='tipoAtleta'
                         value='Instrutor'
-                        checked={state.funcao === 'Instrutor'}
+                        checked={state.tipoAtleta === 'Instrutor'}
                         onChange={event => handleChange(event)}
                         className={styles.radio_funcao}
                     />
                     <Radio
                         label='Professor'
-                        name='funcao'
+                        name='tipoAtleta'
                         value='Professor'
-                        checked={state.funcao === 'Professor'}
+                        checked={state.tipoAtleta === 'Professor'}
                         onChange={event => handleChange(event)}
                         className={styles.radio_funcao}
                     />
                     <Radio
                         label='Mestre'
-                        name='funcao'
+                        name='tipoAtleta'
                         value='Mestre'
-                        checked={state.funcao === 'Mestre'}
+                        checked={state.tipoAtleta === 'Mestre'}
                         onChange={event => handleChange(event)}
                         className={styles.radio_funcao}
                     />
@@ -364,13 +407,14 @@ const CadastroAtletas = (props) => {
                             </div>
                             <div className={styles.card_inputs} style={{ width: '27.2%' }}>
                                 <Label>CPF</Label>
-                                <Input
-                                    className={styles.inputs}
+                                <MaskedInput
+                                    mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
                                     type="text"
-                                    name="cpf"
+                                    name='cpf'
+                                    className={`form-control ${styles.inputs}`}
+                                    keepCharPositions='true'
                                     value={state.cpf}
-                                    onChange={event => handleChange(event)}
-                                />
+                                    onChange={e => DesMask(e, 'cpf')} />
                             </div>
                             <div className={styles.card_inputs} style={{ width: '27.2%' }}>
                                 <Label>RG</Label>
@@ -390,8 +434,8 @@ const CadastroAtletas = (props) => {
                                 <Input
                                     className={styles.inputs}
                                     type="text"
-                                    name="endereco"
-                                    value={state.endereco}
+                                    name="rua"
+                                    value={state.rua}
                                     onChange={event => handleChange(event)}
                                 />
                             </div>
@@ -408,7 +452,7 @@ const CadastroAtletas = (props) => {
                             <div className={styles.card_inputs} style={{ width: '27.2%' }}>
                                 <Label>Complemento</Label>
                                 <Input
-                                    className={styles.inputs}
+                                    className={`${styles.inputs}`}
                                     type="text"
                                     name="complemento"
                                     value={state.complemento}
@@ -419,13 +463,14 @@ const CadastroAtletas = (props) => {
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '25px' }}>
                             <div className={styles.card_inputs} style={{ width: '27.2%' }}>
                                 <Label>CEP</Label>
-                                <Input
-                                    className={styles.inputs}
+                                <MaskedInput
+                                    mask={[/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/]}
                                     type="text"
-                                    name="cep"
+                                    name='cep'
+                                    className={`form-control ${styles.inputs}`}
+                                    keepCharPositions='true'
                                     value={state.cep}
-                                    onChange={event => handleChange(event)}
-                                />
+                                    onChange={e => DesMask(e, 'cep')} />
                             </div>
                             <div className={styles.card_inputs} style={{ width: '27.2%' }}>
                                 <Label>Estado</Label>
@@ -452,23 +497,25 @@ const CadastroAtletas = (props) => {
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
                             <div className={styles.card_inputs} style={{ width: '42.2%' }}>
                                 <Label>Telefone de Casa</Label>
-                                <Input
-                                    className={styles.inputs}
+                                <MaskedInput
+                                    mask={['(', /\d/, /\d/, ')', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
                                     type="text"
-                                    name="telefoneCasa"
-                                    value={state.telefoneCasa}
-                                    onChange={event => handleChange(event)}
-                                />
+                                    name='telefone'
+                                    className={`form-control ${styles.inputs}`}
+                                    keepCharPositions='true'
+                                    value={state.telefone}
+                                    onChange={e => DesMask(e, 'telefone')} />
                             </div>
                             <div className={styles.card_inputs} style={{ width: '42.2%' }}>
                                 <Label>Celular</Label>
-                                <Input
-                                    className={styles.inputs}
+                                <MaskedInput
+                                    mask={['(', /\d/, /\d/, ')', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
                                     type="text"
-                                    name="celular"
+                                    name='celular'
+                                    className={`form-control ${styles.inputs}`}
+                                    keepCharPositions='true'
                                     value={state.celular}
-                                    onChange={event => handleChange(event)}
-                                />
+                                    onChange={e => DesMask(e, 'celular')} />
                             </div>
                         </Row>
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
@@ -510,16 +557,18 @@ const CadastroAtletas = (props) => {
                             <div style={{ marginLeft: '29%' }}>
                                 {state.editItem ?
                                     <Button variant="contained" onClick={() => handleEdit()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
-                                        Salvar
+                                        Editar
                                     </Button>
                                     :
                                     <Button variant="contained" onClick={() => handleSave()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
                                         Salvar
                                     </Button>
                                 }
-                                <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
-                                    Cancelar
-                            </Button>
+                                <Link to='/Atletas'>
+                                    <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
+                                        Cancelar
+                                    </Button>
+                                </Link>
                             </div>
                         </Row>
 

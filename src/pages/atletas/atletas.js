@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button'
 import styles from './atletas.module.css'
 import { Link } from 'react-router-dom'
@@ -10,6 +10,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Card, CardContent } from '@material-ui/core';
+import api from '../../service/api'
+import { message } from 'antd';
+import moment from 'moment'
 
 const StyledTableCell = withStyles(theme => ({
     head: {
@@ -33,14 +36,33 @@ const StyledTableRow = withStyles(theme => ({
 
 
 const Atletas = (props) => {
-    const [list, setList] = useState([
-        {
-            nome: 'Augusto',
-            nascimento: '15/10/1998',
-            função: 'Aluno',
-            kyo: '3 kyu'
+    const [state, setState] = useState({
+        list: []
+    })
+    function deleteAtletaList(id) {
+        if (window.confirm('Você deseja realmente deletar esse atleta ?')) {
+            api.delete('api/atleta/' + id, {
+            })
+                .then((response) => {
+                    message.success('Sucesso ao deletar Atleta')
+                    refreshList()
+                })
+                .catch((error) => {
+                    message.warning('Erro ao deletar Atleta')
+                })
         }
-    ])
+    }
+    function refreshList() {
+        api.get('api/atleta', {
+        })
+            .then((response) => {
+                setState({ ...state, list: response.data })
+            })
+
+    }
+    useEffect(() => {
+        refreshList()
+    }, [])
     return (
         <div className={styles.Container}>
             <div>
@@ -78,24 +100,28 @@ const Atletas = (props) => {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {list.map((list, index) => (
+                                            {state.list.map((list, index) => (
                                                 <StyledTableRow key={index}>
+                                                    {console.log(list)}
                                                     <StyledTableCell align="center" component="th" scope="row">
                                                         {index + 1}
                                                     </StyledTableCell>
                                                     <StyledTableCell align="center">{list.nome}</StyledTableCell>
-                                                    <StyledTableCell align="center">{list.nascimento}</StyledTableCell>
-                                                    <StyledTableCell align="center">{list.função}</StyledTableCell>
-                                                    <StyledTableCell align="center">{list.kyo}</StyledTableCell>
+                                                    <StyledTableCell align="center">{moment(list.dataNascimento).format('DD-MM-YYYY')}</StyledTableCell>
+                                                    <StyledTableCell align="center">{list.tipoAtleta}</StyledTableCell>
+                                                    <StyledTableCell align="center">{list.graduacao}</StyledTableCell>
                                                     <StyledTableCell align="center">
                                                         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                                                            <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.botaoCarregar} color="primary">
-                                                                Carregar
-                                                        </Button>
+                                                            <Link to={{ pathname: `/CadastroAtleta/${index}`, state: list }} style={{ color: 'white', textDecoration: 'inherit', width: '30%' }}>
+                                                                <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643', width: '100%' }} className={styles.botaoCarregar} color="primary">
+                                                                    Carregar
+                                                                </Button>
+                                                            </Link>
                                                             <Button variant="contained"
+                                                                onClick={() => deleteAtletaList(list.id)}
                                                                 className={styles.botaoCarregar}
                                                                 style={{ textTransform: 'capitalize', backgroundColor: '#9E9E9E', color: '#fff' }}>
-                                                                Desvincular
+                                                                Deletar
                                                         </Button>
                                                         </div>
                                                     </StyledTableCell>

@@ -9,6 +9,8 @@ import 'antd/dist/antd.css';
 import Select from 'react-select';
 import { withRouter } from 'react-router-dom'
 import api from '../../../service/api'
+import axios from 'axios'
+import moment from 'moment'
 
 const colourOptions = [
   { value: 'chocolate', label: 'Chocolate' },
@@ -51,6 +53,7 @@ const CadastroCampeonatos = (props) => {
       atletas: [],
       chave: '8',
       editItem: false,
+      viewCampeonato: false,
 
     }
   )
@@ -90,6 +93,29 @@ const CadastroCampeonatos = (props) => {
         message.error('Erro ao gravar Aula')
       })
   }
+  function handleSaveChallonge() {
+    axios.post(`https://api.challonge.com/v1/tournaments.json`, {
+      api_key: 'vcOcbI7p8Gut1raQapl3uiCdEttjIkrRKTVdRScV',
+      tournament: {
+        name: state.nome,
+        tournament_type: 'Single elimination',
+        url: `SmartDojo_${state.nome}`,
+        signup_cap: state.chave,
+        hold_third_place_match: false,
+        private: true,
+        notify_users_when_matches_open: false,
+        notify_users_when_the_tournament_ends: false,
+        start_at: moment(new Date()).format(),
+
+      }
+    })
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
   function handleEdit() {
     if (props.location.state) {
       api.post('api/atletas', {
@@ -120,6 +146,7 @@ const CadastroCampeonatos = (props) => {
       [event.target.name]: value
     });
   }
+
   function setArbitros(event, option) {
     if (event !== null) {
       event.map((item) => {
@@ -182,121 +209,134 @@ const CadastroCampeonatos = (props) => {
     }
 
   }
+  const Cadastro = () => {
+    return (
+      <>
+        <div className={styles.title}>
+          Novo Cadastro
+          </div>
+        <Row style={{ margin: '0px 0px 0px 28px' }}>
+          <div className={styles.card_inputs} style={{ width: '46.1%' }}>
+            <label>Árbitros</label>
+            <Select
+              isMulti
+              name="atletasAula"
+              options={colourOptions}
+              onChange={(event, options) => setArbitros(event, options)}
+              className="basic-multi-select"
+              classNamePrefix="select"
+            />
+          </div>
+          <div className={styles.card_inputs} style={{ width: '46.1%' }}>
+            <label>Atletas</label>
+            <Select
+              isMulti
+              name="atletas"
+              options={colourOptions}
+              onChange={(event, options) => setAlunos(event, options)}
+              className="basic-multi-select"
+              classNamePrefix="select"
+            />
+          </div>
+        </Row>
+        <hr className={styles.hr} />
+        <Row style={{ margin: '0px 0px 0px 28px' }}>
+          <div className={styles.card_inputs} style={{ width: '30%' }}>
+            <label>Nome</label>
+            <Input
+              className={styles.inputs}
+              style={{ width: '100%' }}
+              type="text"
+              name="nome"
+              value={state.nome}
+              onChange={event => handleChange(event)}
+            />
+          </div>
+          <div className={styles.card_inputs} style={{ width: '30%' }}>
+            <label>Premiação</label>
+            <Input
+              className={styles.inputs}
+              style={{ width: '100%' }}
+              type="text"
+              name="premiacao"
+              value={state.premiacao}
+              onChange={event => handleChange(event)}
+            />
+          </div>
+          <div className={styles.card_inputs} style={{ width: '30%' }}>
+            <label>Estilo</label>
+            <Input
+              className={styles.inputs}
+              style={{ width: '100%' }}
+              type="text"
+              name="estilo"
+              value={state.estilo}
+              onChange={event => handleChange(event)}
+            />
+          </div>
+        </Row>
+        <hr className={styles.hr} />
+        <Row style={{ margin: '0px 0px 0px 28px' }}>
+          <div className={styles.card_inputs} style={{ width: '30%' }}>
+            <label>Modalidade</label>
+            <Input
+              className={styles.inputs}
+              style={{ width: '100%' }}
+              type="text"
+              name="modalidade"
+              value={state.modalidade}
+              onChange={event => handleChange(event)}
+            />
+          </div>
+          <div className={styles.card_inputs} style={{ width: '30%' }}>
+            <label>Data</label>
+            <Input
+              className={styles.inputs}
+              style={{ width: '100%' }}
+              type="date"
+              name="data"
+              value={state.data}
+              onChange={event => handleChange(event)}
+            />
+          </div>
+          <div className={styles.card_inputs} style={{ width: '30%' }}>
+            <label>Chave</label>
+            <Input type="select" name="chave" className={styles.inputs} value={state.chave} onChange={event => handleChange(event)}>
+              <option>Selecione</option>
+              <option value='8'>8</option>
+              <option value='16'>16</option>
+            </Input>
+          </div>
+        </Row>
+        <hr className={styles.hr} />
+        <Row style={{ margin: '20px 48px 0px 0px', display: 'flex', justifyContent: 'flex-end' }}>
+          {state.editItem ?
+            <Button variant="contained" onClick={() => handleEdit()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+              Salvar
+              </Button>
+            :
+            <Button variant="contained" onClick={() => [handleSaveChallonge()]} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+              Salvar
+            </Button>
+          }
+          <Button variant="contained" onClick={() => setState({ ...initialState })} style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
+            Cancelar
+              </Button>
+        </Row>
+      </>
+    )
+  }
+  const PreviewBracket = () => {
+    return (
+      <Row style={{ margin: '0px 0px 0px 28px' }}>
+      </Row>
+    )
+  }
 
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>
-        Novo Cadastro
-            </div>
-      <Row style={{ margin: '0px 0px 0px 28px' }}>
-        <div className={styles.card_inputs} style={{ width: '46.1%' }}>
-          <label>Árbitros</label>
-          <Select
-            isMulti
-            name="atletasAula"
-            options={colourOptions}
-            onChange={(event, options) => setArbitros(event, options)}
-            className="basic-multi-select"
-            classNamePrefix="select"
-          />
-        </div>
-        <div className={styles.card_inputs} style={{ width: '46.1%' }}>
-          <label>Atletas</label>
-          <Select
-            isMulti
-            name="atletas"
-            options={colourOptions}
-            onChange={(event, options) => setAlunos(event, options)}
-            className="basic-multi-select"
-            classNamePrefix="select"
-          />
-        </div>
-      </Row>
-      <hr className={styles.hr} />
-      <Row style={{ margin: '0px 0px 0px 28px' }}>
-        <div className={styles.card_inputs} style={{ width: '30%' }}>
-          <label>Nome</label>
-          <Input
-            className={styles.inputs}
-            style={{ width: '100%' }}
-            type="text"
-            name="nome"
-            value={state.nome}
-            onChange={event => handleChange(event)}
-          />
-        </div>
-        <div className={styles.card_inputs} style={{ width: '30%' }}>
-          <label>Premiação</label>
-          <Input
-            className={styles.inputs}
-            style={{ width: '100%' }}
-            type="text"
-            name="premiacao"
-            value={state.premiacao}
-            onChange={event => handleChange(event)}
-          />
-        </div>
-        <div className={styles.card_inputs} style={{ width: '30%' }}>
-          <label>Estilo</label>
-          <Input
-            className={styles.inputs}
-            style={{ width: '100%' }}
-            type="text"
-            name="estilo"
-            value={state.estilo}
-            onChange={event => handleChange(event)}
-          />
-        </div>
-      </Row>
-      <hr className={styles.hr} />
-      <Row style={{ margin: '0px 0px 0px 28px' }}>
-        <div className={styles.card_inputs} style={{ width: '30%' }}>
-          <label>Modalidade</label>
-          <Input
-            className={styles.inputs}
-            style={{ width: '100%' }}
-            type="text"
-            name="modalidade"
-            value={state.modalidade}
-            onChange={event => handleChange(event)}
-          />
-        </div>
-        <div className={styles.card_inputs} style={{ width: '30%' }}>
-          <label>Data</label>
-          <Input
-            className={styles.inputs}
-            style={{ width: '100%' }}
-            type="date"
-            name="data"
-            value={state.data}
-            onChange={event => handleChange(event)}
-          />
-        </div>
-        <div className={styles.card_inputs} style={{ width: '30%' }}>
-          <label>Chave</label>
-          <Input type="select" name="chave" className={styles.inputs} value={state.chave} onChange={event => handleChange(event)}>
-            <option>Selecione</option>
-            <option value='8'>8</option>
-            <option value='16'>16</option>
-          </Input>
-        </div>
-      </Row>
-      <hr className={styles.hr} />
-      <Row style={{ margin: '20px 48px 0px 0px', display: 'flex', justifyContent: 'flex-end' }}>
-        {state.editItem ?
-          <Button variant="contained" onClick={() => handleEdit()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
-            Salvar
-                </Button>
-          :
-          <Button variant="contained" onClick={() => handleSave()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
-            Salvar
-                </Button>
-        }
-        <Button variant="contained" onClick={() => setState({ ...initialState })} style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
-          Cancelar
-                </Button>
-      </Row>
+      {state.viewCampeonato ? PreviewBracket() : Cadastro()}
     </div>
   )
 }

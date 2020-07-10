@@ -20,6 +20,7 @@ import Atletas from '../pages/atletas/atletas';
 import AulasFrequencias from '../pages/aulasfrequencias/aulasfrequencias';
 import Campeonatos from '../pages/campeonatos/campeonatos';
 import Prestacoes from '../pages/prestacoes/prestacoes';
+import Modalidades from '../pages/modalidade/modalidade';
 import Login from '../pages/login/login';
 
 /* Cadastros */
@@ -27,6 +28,8 @@ import CadastroAtleta from '../pages/cadastros/atletas/atletas'
 import CadastroAulasFreq from '../pages/cadastros/aulasfrequencias/aulasfrequencias';
 import CadastroCampeonatos from '../pages/cadastros/campeonatos/campeonatos'
 import CadastroPrestacoes from '../pages/cadastros/prestacoes/prestacoes'
+import CadastroModalidades from '../pages/cadastros/modalidades/modalidades'
+
 
 const App = () => {
   return (
@@ -36,7 +39,7 @@ const App = () => {
           <Login />
         } />
         <div className="App">
-          
+
           <PrivateRoute path="/Associação" render={(props) =>
             <Fragment>
               <Sidebar />
@@ -90,6 +93,22 @@ const App = () => {
               <Sidebar />
               <Main title={'Campeonatos'}>
                 <CadastroCampeonatos />
+              </Main>
+            </Fragment>
+          } />
+          <PrivateRoute path="/Modalidades" render={(props) =>
+            <Fragment>
+              <Sidebar />
+              <Main title={'Modalidade'}>
+                <Modalidades />
+              </Main>
+            </Fragment>
+          } />
+          <PrivateRoute path="/CadastroModalidades" render={(props) =>
+            <Fragment>
+              <Sidebar />
+              <Main title={'Campeonatos'}>
+                <CadastroModalidades />
               </Main>
             </Fragment>
           } />
