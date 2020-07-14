@@ -7,28 +7,9 @@ import { Input, Label, Col, Row } from 'reactstrap';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import Select from 'react-select';
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom'
 import api from '../../../service/api'
-import axios from 'axios'
-import moment from 'moment'
 
-const colourOptions = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry2' },
-  { value: 'strawberry2', label: 'Strawberry3' },
-  { value: 'strawberry3', label: 'Strawberry4' },
-  { value: 'strawberry4', label: 'Strawberry5' },
-  { value: 'strawberry5', label: 'Strawberry6' },
-  { value: 'strawberry6', label: 'Strawberry7' },
-  { value: 'strawberry7', label: 'Strawberry8' },
-  { value: 'strawberry8', label: 'Strawberry9' },
-  { value: 'strawberry6456', label: 'Strawberry11' },
-  { value: 'strawberry456', label: 'Strawberry12' },
-  { value: 'strawberry73', label: 'Strawberry123' },
-  { value: 'strawberry34', label: 'Strawberry12' },
-  { value: 'strawberry123', label: 'Strawberry5215' },
-  { value: 'vanilla', label: 'Vanilla' }
-]
 
 const initialState = {
   nome: '',
@@ -42,100 +23,108 @@ const initialState = {
   editItem: false,
 }
 const CadastroCampeonatos = (props) => {
+  var iframe
   const [state, setState] = useState(
     {
       nome: '',
-      premiacao: '',
-      estilo: '',
-      data: '',
-      modalidade: '',
-      arbitros: [],
+      atletasAula: [],
       atletas: [],
-      chave: '8',
+      modalidades: [],
+      modalidade: '',
+      descricao: '',
+      data: '',
+      iframe: '',
       editItem: false,
       viewCampeonato: false,
-
+      carregouIframe: false,
     }
   )
   useEffect(() => {
+    refreshList()
+  }, [props])
+
+
+  async function refreshList() {
+    let iframe
+    const arrayAux = []
+    const arrayAtletas = []
+    const arrayModalidade = []
+    await api.get('api/modalidade').then(async (response) => { await response.data.map((item) => { arrayModalidade.push({ value: item.id, label: item.nome }) }) })
+    await api.get('api/atleta').then(async (response) => { await response.data.map(async (item) => { arrayAux.push({ value: item.id, label: item.nome }) }) })
+
+
+
     if (props.location.state) {
-      setState({
+      await api.get('api/Campeonato/embed-code/id=' + props.location.state.id).then((response) => { iframe = response.data })
+      const arrayAuxLocation = []
+      arrayAux.filter(item1 => {
+        props.location.state.atletas.filter(item2 => {
+          if (item1.value === item2.atletaId) {
+            arrayAuxLocation.push({
+              value: item2.atletaId,
+              label: item1.label,
+            })
+          }
+          else {
+            arrayAtletas.push({
+              value: item2.atletaId,
+              label: item1.label,
+            })
+          }
+        })
+      })
+
+      await setState({
         nome: props.location.state.nome,
-        premiacao: props.location.state.premiacao,
-        data: new Date(props.location.state.data),
-        modalidade: props.location.state.modalidade,
-        arbitros: props.location.state.arbitros,
-        atletas: props.location.state.atletas,
-        chave: props.location.state.chave,
+        modalidades: arrayModalidade,
+        modalidade: props.location.state.modalidadeId,
+        descricao: props.location.state.descricao,
+        data: props.location.state.data,
+        atletas: arrayAtletas,
+        iframe: iframe,
+        atletasAula: arrayAuxLocation,
         editItem: true
       })
+    } else {
+      setState({ ...state, modalidades: arrayModalidade, atletas: arrayAux })
     }
-    console.log(state)
-  }, [props, state])
-
-  function handleSave() {
-    api.post('api/atletas', {
-      nome: state.turma,
-      rua: state.endereco,
-      bairro: state.bairro,
-      cep: state.cep,
-      estado: state.estado,
-      cidade: state.cidade,
-      dataInicial: state.dataInicio,
-      dataFinal: state.dataFinal,
-      modalidadeId: state.modalidade,
-      atletas: state.atletasAula
-    })
-      .then((response) => {
-        message.success('Sucesso ao gravar Aula')
-      })
-      .catch((error) => {
-        message.error('Erro ao gravar Aula')
-      })
   }
-  function handleSaveChallonge() {
-    axios.post(`https://api.challonge.com/v1/tournaments.json`, {
-      api_key: 'vcOcbI7p8Gut1raQapl3uiCdEttjIkrRKTVdRScV',
-      tournament: {
-        name: state.nome,
-        tournament_type: 'Single elimination',
-        url: `SmartDojo_${state.nome}`,
-        signup_cap: state.chave,
-        hold_third_place_match: false,
-        private: true,
-        notify_users_when_matches_open: false,
-        notify_users_when_the_tournament_ends: false,
-        start_at: moment(new Date()).format(),
-
-      }
+  function handleSave() {
+    api.post('api/Campeonato', {
+      nome: state.nome,
+      descricao: state.descricao,
+      data: state.data,
+      modalidadeId: state.modalidade,
+      atletas: state.atletasAula,
     })
       .then((response) => {
-        console.log(response)
+        message.success('Sucesso ao gravar campeonato')
+        props.history.push({
+          pathname: '/Campeonatos'
+        })
       })
       .catch((error) => {
-        console.log(error)
+        message.error('Erro ao gravar campeonato')
       })
   }
   function handleEdit() {
     if (props.location.state) {
-      api.post('api/atletas', {
+      api.put('api/Campeonato', {
         id: props.location.state.id,
-        nome: state.turma,
-        rua: state.endereco,
-        bairro: state.bairro,
-        cep: state.cep,
-        estado: state.estado,
-        cidade: state.cidade,
-        dataInicial: state.dataInicio,
-        dataFinal: state.dataFinal,
+        nome: state.nome,
+        descricao: state.descricao,
+        data: state.data,
         modalidadeId: state.modalidade,
-        atletas: state.atletasAula
+        atletas: state.atletasAula,
       })
         .then((response) => {
-          message.success('Sucesso ao editar Aula')
+          message.success('Sucesso ao editar campeonato')
+          props.history.push({
+            pathname: '/Campeonatos'
+          })
         })
         .catch((error) => {
-          message.error('Erro ao editar Aula')
+          message.error('Erro ao editar campeonato')
         })
     }
   }
@@ -147,67 +136,48 @@ const CadastroCampeonatos = (props) => {
     });
   }
 
-  function setArbitros(event, option) {
+  function setAtletas(event, option) {
     if (event !== null) {
       event.map((item) => {
         if (option.action === "select-option") {
           setState({
             ...state,
-            arbitros:
+            atletasAula:
               [
-                ...state.arbitros,
+                ...state.atletasAula,
                 {
-                  value: item.value,
-                  label: item.label
+                  atletaId: item.value,
+                  label: item.label,
                 }
               ]
           })
         }
-        else if (option.action === "remove-value" || option.action === "pop-value") {
-          const data = state.arbitros.filter(opt => opt.label !== option.removedValue.label)
-          setState({
-            ...state,
-            arbitros:
-              [
-                ...data
-              ]
-          })
+        if (option.action === "remove-value") {
+          const data = state.atletasAula.filter(opt => opt.value !== option.removedValue.value)
+          if (state.atletasAula.length > 1) {
+            setState({
+              ...state,
+              atletasAula:
+                [
+                  ...data
+                ]
+            })
+          }
         }
 
+      })
+    }
+    if (event === null) {
+      const arrayAux = []
+      setState({
+        ...state,
+        atletasAula: arrayAux
       })
     }
 
   }
-  function setAlunos(event, option) {
-    if (event !== null) {
-      event.map((item) => {
-        if (option.action === "select-option") {
-          setState({
-            ...state,
-            atletas:
-              [
-                ...state.atletas,
-                {
-                  value: item.value,
-                  label: item.label
-                }
-              ]
-          })
-        }
-        else if (option.action === "remove-value" || option.action === "pop-value") {
-          const data = state.atletas.filter(opt => opt.label !== option.removedValue.label)
-          setState({
-            ...state,
-            atletas:
-              [
-                ...data
-              ]
-          })
-        }
-
-      })
-    }
-
+  function changeView(view) {
+    setState({ ...state, viewCampeonato: view })
   }
   const Cadastro = () => {
     return (
@@ -217,23 +187,24 @@ const CadastroCampeonatos = (props) => {
           </div>
         <Row style={{ margin: '0px 0px 0px 28px' }}>
           <div className={styles.card_inputs} style={{ width: '46.1%' }}>
-            <label>Árbitros</label>
+            <label>Atletas</label>
             <Select
               isMulti
-              name="atletasAula"
-              options={colourOptions}
-              onChange={(event, options) => setArbitros(event, options)}
+              name="atletas"
+              options={state.atletas}
+              value={state.atletasAula}
+              onChange={(event, options) => setAtletas(event, options)}
               className="basic-multi-select"
               classNamePrefix="select"
             />
           </div>
           <div className={styles.card_inputs} style={{ width: '46.1%' }}>
-            <label>Atletas</label>
+            <label>Modalidade</label>
             <Select
-              isMulti
-              name="atletas"
-              options={colourOptions}
-              onChange={(event, options) => setAlunos(event, options)}
+              name="modalidade"
+              options={state.modalidades}
+              value={state.modalidades.filter(option => option.value === state.modalidade)}
+              onChange={event => setState({ ...state, modalidade: event.value })}
               className="basic-multi-select"
               classNamePrefix="select"
             />
@@ -241,7 +212,7 @@ const CadastroCampeonatos = (props) => {
         </Row>
         <hr className={styles.hr} />
         <Row style={{ margin: '0px 0px 0px 28px' }}>
-          <div className={styles.card_inputs} style={{ width: '30%' }}>
+          <div className={styles.card_inputs} style={{ width: '46.1%' }}>
             <label>Nome</label>
             <Input
               className={styles.inputs}
@@ -252,84 +223,88 @@ const CadastroCampeonatos = (props) => {
               onChange={event => handleChange(event)}
             />
           </div>
-          <div className={styles.card_inputs} style={{ width: '30%' }}>
-            <label>Premiação</label>
+          <div className={styles.card_inputs} style={{ width: '46.1%' }}>
+            <label>Data</label>
             <Input
               className={styles.inputs}
               style={{ width: '100%' }}
-              type="text"
-              name="premiacao"
-              value={state.premiacao}
-              onChange={event => handleChange(event)}
-            />
-          </div>
-          <div className={styles.card_inputs} style={{ width: '30%' }}>
-            <label>Estilo</label>
-            <Input
-              className={styles.inputs}
-              style={{ width: '100%' }}
-              type="text"
-              name="estilo"
-              value={state.estilo}
+              type="datetime-local"
+              step="1800"
+              name="data"
+              value={state.data}
               onChange={event => handleChange(event)}
             />
           </div>
         </Row>
         <hr className={styles.hr} />
         <Row style={{ margin: '0px 0px 0px 28px' }}>
-          <div className={styles.card_inputs} style={{ width: '30%' }}>
-            <label>Modalidade</label>
-            <Input
-              className={styles.inputs}
+          <div className={styles.card_inputs} style={{ width: '93.8%' }}>
+            <label>Descrição</label>
+            <textarea
+              className={`form-control ${styles.inputs}`}
               style={{ width: '100%' }}
               type="text"
-              name="modalidade"
-              value={state.modalidade}
+              name="descricao"
+              value={state.descricao}
               onChange={event => handleChange(event)}
             />
-          </div>
-          <div className={styles.card_inputs} style={{ width: '30%' }}>
-            <label>Data</label>
-            <Input
-              className={styles.inputs}
-              style={{ width: '100%' }}
-              type="date"
-              name="data"
-              value={state.data}
-              onChange={event => handleChange(event)}
-            />
-          </div>
-          <div className={styles.card_inputs} style={{ width: '30%' }}>
-            <label>Chave</label>
-            <Input type="select" name="chave" className={styles.inputs} value={state.chave} onChange={event => handleChange(event)}>
-              <option>Selecione</option>
-              <option value='8'>8</option>
-              <option value='16'>16</option>
-            </Input>
           </div>
         </Row>
         <hr className={styles.hr} />
         <Row style={{ margin: '20px 48px 0px 0px', display: 'flex', justifyContent: 'flex-end' }}>
           {state.editItem ?
-            <Button variant="contained" onClick={() => handleEdit()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
-              Salvar
+            <>
+              <Button variant="contained" onClick={() => handleEdit()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+                Editar
               </Button>
+              <Button variant="contained" onClick={() => changeView(true)} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+                Ver Tabela
+              </Button>
+            </>
             :
-            <Button variant="contained" onClick={() => [handleSaveChallonge()]} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+            <Button variant="contained" onClick={() => handleSave()} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
               Salvar
             </Button>
           }
-          <Button variant="contained" onClick={() => setState({ ...initialState })} style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
-            Cancelar
+          <Link to='/Campeonatos'>
+            <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
+              Cancelar
               </Button>
+          </Link>
         </Row>
       </>
     )
   }
   const PreviewBracket = () => {
+    function getAttrs(iframeTag) {
+      var doc = document.createElement('div');
+      doc.innerHTML = iframeTag;
+
+      const iframe = doc.getElementsByTagName('iframe')[0];
+      return [].slice
+        .call(iframe.attributes)
+        .reduce((attrs, element) => {
+          attrs[element.name] = element.value;
+          return attrs;
+        }, {})
+    }
+
     return (
-      <Row style={{ margin: '0px 0px 0px 28px' }}>
-      </Row>
+      <div>
+        <Row style={{ margin: '0px 0px 0px 28px' }}>
+          <iframe {...getAttrs(state.iframe)} />
+        </Row>
+        <Row style={{ margin: '20px 48px 0px 0px', display: 'flex', justifyContent: 'flex-end' }}>
+          <Button variant="contained" onClick={() => changeView(false)} style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.btn_salvar} color="primary">
+            Voltar
+          </Button>
+          <Link to='/Campeonatos'>
+            <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#959C9C' }} className={styles.btn_salvar} color="primary">
+              Cancelar
+          </Button>
+          </Link>
+        </Row >
+      </div>
     )
   }
 

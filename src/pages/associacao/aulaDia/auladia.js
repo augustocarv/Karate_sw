@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
+import styles from './aulaDia.module.css'
 import Button from '@material-ui/core/Button'
-import styles from './campeonatos.module.css'
 import { Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -11,8 +11,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Card, CardContent } from '@material-ui/core';
 import { message } from 'antd';
-import api from '../../service/api'
+import api from '../../../service/api'
 import moment from 'moment'
+import { FaChevronLeft } from 'react-icons/fa';
 
 
 
@@ -37,30 +38,37 @@ const StyledTableRow = withStyles(theme => ({
 
 
 
-const Campeonatos = (props) => {
+const AulaDia = ({ start, end, setView }) => {
     var iframe
     const [state, setState] = useState({
-        list: []
+        list: [
+            {
+                id: 0,
+                nome: 'João',
+            },
+        ],
+        presença: false,
+        presença2: false,
+
     })
     function deleteCampeonatoList(id) {
-        if (window.confirm('Você deseja realmente deletar esse Campeonato ?')) {
-            api.delete('api/Campeonato/' + id, {
-            })
-                .then((response) => {
-                    message.success('Sucesso ao deletar Campeonato')
-                    refreshList()
-                })
-                .catch((error) => {
-                    message.warning('Erro ao deletar Campeonato')
-                })
-        }
+        // api.delete('api/Campeonato/' + id, {
+        // })
+        //     .then((response) => {
+        //         message.success('Sucesso ao deletar Modalidade')
+        //         refreshList()
+        //     })
+        //     .catch((error) => {
+        //         message.warning('Erro ao deletar Modalidade')
+        //     })
+
     }
     function refreshList() {
-        api.get('api/Campeonato', {
-        })
-            .then((response) => {
-                setState({ ...state, list: response.data })
-            })
+        // api.get('api/Campeonato', {
+        // })
+        //     .then((response) => {
+        //         setState({ ...state, list: response.data })
+        //     })
 
     }
     useEffect(() => {
@@ -70,24 +78,13 @@ const Campeonatos = (props) => {
         <div className={styles.Container}>
             <div>
                 <div className={styles.ContainerCartoes} >
-                    <Card className={styles.Cartao}>
-                        <div className={styles.title}>
-                            <div className={styles.nameTitleCartao}>
-                                Lista de Campeonatos Cadastrados
-                            </div>
-                            <Link to="/CadastroCampeonato" style={{ color: 'white', textDecoration: 'inherit' }}>
-                                <Button variant="contained"
-                                    style={{
-                                        margin: '10px 15px 0 0',
-                                        textTransform: 'capitalize',
-                                        backgroundColor: '#fc9643'
-                                    }}
-                                    className={styles.botaoNovo}
-                                    color="primary">
-                                    + Novo
-                                </Button>
-                            </Link>
+                    <div className={styles.titulo}>
+                        <strong>{moment(start).format('LLLL')}</strong>
+                        <div>
+                            <FaChevronLeft onClick={() => setView(false)} style={{ cursor: 'pointer', color: 'grey', fontSize: '19px' }} />
                         </div>
+                    </div>
+                    <Card className={styles.Cartao}>
                         <CardContent>
                             <div className={styles.ConteudoCartoes}>
                                 <TableContainer>
@@ -95,8 +92,6 @@ const Campeonatos = (props) => {
                                         <TableHead style={{ color: "#f5f5f5" }}>
                                             <TableRow>
                                                 <StyledTableCell align="center"></StyledTableCell>
-                                                <StyledTableCell align="center">Nome do Campeonato</StyledTableCell>
-                                                <StyledTableCell align="center">Data</StyledTableCell>
                                                 <StyledTableCell align="center">Alunos</StyledTableCell>
                                                 <StyledTableCell align="center">Opções</StyledTableCell>
                                             </TableRow>
@@ -108,21 +103,15 @@ const Campeonatos = (props) => {
                                                         {index + 1}
                                                     </StyledTableCell>
                                                     <StyledTableCell align="center">{list.nome}</StyledTableCell>
-                                                    <StyledTableCell align="center">{moment(list.data).format('LLLL')}</StyledTableCell>
-                                                    <StyledTableCell align="center">{`${list.atletas.length} Atletas`}</StyledTableCell>
                                                     <StyledTableCell align="center">
                                                         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                                                            <Link to={{ pathname: `/CadastroCampeonato/${index}`, state: list }} style={{ color: 'white', textDecoration: 'inherit', width: '30%' }}>
-                                                                <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} className={styles.botaoCarregar} color="primary">
-                                                                    Carregar
-                                                            </Button>
-                                                            </Link>
-                                                            <Button variant="contained"
-                                                                onClick={() => deleteCampeonatoList(list.id)}
-                                                                className={styles.botaoCarregar}
-                                                                style={{ textTransform: 'capitalize', backgroundColor: '#9E9E9E', color: '#fff' }}>
-                                                                Deletar
-                                                        </Button>
+                                                            {!state.presença ? <><Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643' }} onClick={() => setState({ ...state, presença: true })} className={styles.botaoCarregar} color="primary">
+                                                                Presente
+                                                            </Button> <Button variant="contained"
+                                                                    className={styles.botaoCarregar}
+                                                                    style={{ textTransform: 'capitalize', backgroundColor: '#9E9E9E', color: '#fff' }}>
+                                                                    Ausente
+                                                        </Button></> : <div>Presente</div>}
                                                         </div>
                                                     </StyledTableCell>
                                                 </StyledTableRow>
@@ -138,4 +127,4 @@ const Campeonatos = (props) => {
         </div>
     )
 }
-export default Campeonatos
+export default AulaDia

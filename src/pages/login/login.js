@@ -3,6 +3,7 @@ import styles from './login.module.css'
 import { Card, Image } from 'semantic-ui-react'
 import Atleta from '../../assets/images/Atleta.png'
 import { GoMail } from 'react-icons/go'
+import { Link } from 'react-router-dom'
 import { AiFillLock } from 'react-icons/ai'
 import Button from '@material-ui/core/Button'
 import { InputGroup, InputGroupAddon, InputGroupText, Input } from 'reactstrap';
@@ -20,6 +21,10 @@ const Login = () => {
             ...state,
             [event.target.name]: value
         });
+    }
+    function Login() {
+        sessionStorage.setItem('token', '12345')
+        window.location.href = "/Dashboard"
     }
     return (
         <div className={styles.main}>
@@ -63,6 +68,7 @@ const Login = () => {
                     </InputGroup>
                     <Button
                         variant="contained"
+                        onClick={() => Login()}
                         className={styles.card_content_button}>
                         Login
                     </Button>

@@ -34,11 +34,6 @@ const ComponentDropdown = () => {
                 style={{ marginTop: '1.5%' }}
             >
                 <div style={{ outline: 'none', padding: '7px' }}>
-                    <Link to="/Perfil" style={{ color: 'black', textDecoration: 'inherit' }}>
-                        <div className={styles.menuItem} onClick={handleClose}>
-                            Editar Perfil
-                        </div>
-                    </Link>
                     <div onClick={handleClose, Logout} className={styles.menuItem}>
                         Logout
                     </div>

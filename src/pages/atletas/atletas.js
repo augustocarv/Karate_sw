@@ -112,7 +112,7 @@ const Atletas = (props) => {
                                                     <StyledTableCell align="center">{list.graduacao}</StyledTableCell>
                                                     <StyledTableCell align="center">
                                                         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                                                            <Link to={{ pathname: `/CadastroAtleta/${index}`, state: list }} style={{ color: 'white', textDecoration: 'inherit', width: '30%' }}>
+                                                            <Link to={{ pathname: `/CadastroAtleta/${index}`, state: list, index: index }} style={{ color: 'white', textDecoration: 'inherit', width: '30%' }}>
                                                                 <Button variant="contained" style={{ textTransform: 'capitalize', backgroundColor: '#fc9643', width: '100%' }} className={styles.botaoCarregar} color="primary">
                                                                     Carregar
                                                                 </Button>

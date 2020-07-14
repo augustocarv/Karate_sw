@@ -85,7 +85,7 @@ const CadastroModalidades = (props) => {
                 <div className={styles.form}>
                     <Col style={{ marginRight: '0px', marginLeft: '0px', padding: '0' }}>
                         <Row style={{ marginLeft: '30px', marginRight: '0px' }}>
-                            <div className={styles.card_inputs} style={{ width: '25%' }}>
+                            <div className={styles.card_inputs} style={{ width: '36%' }}>
                                 <label>Nome</label>
                                 <Input
                                     className={styles.inputs}

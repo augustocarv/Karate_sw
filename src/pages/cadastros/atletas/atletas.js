@@ -15,7 +15,7 @@ import api from '../../../service/api'
 const CadastroAtletas = (props) => {
     const [state, setState] = useState(
         {
-            tipoAtleta: '',
+            tipoAtleta: 'Aluno',
             imagem: '',
             nome: '',
             matricula: '',
@@ -57,12 +57,15 @@ const CadastroAtletas = (props) => {
                 profissao: props.location.state.profissao,
                 tipoAtleta: props.location.state.tipoAtleta,
                 graduacao: props.location.state.graduacao,
+                genero: props.location.state.genero,
                 dataInicio: moment(props.location.state.dataInicio).format('YYYY-MM-DD'),
                 dataNascimento: moment(props.location.state.dataNascimento).format('YYYY-MM-DD'),
+                matricula: props.location.index,
                 email: props.location.state.email,
                 cpf: props.location.state.cpf,
                 rg: props.location.state.rg,
                 rua: props.location.state.rua,
+                informacoesAdicionais: props.location.state.informacoesAdicionais,
                 bairro: props.location.state.bairro,
                 cep: props.location.state.cep,
                 estado: props.location.state.estado,
@@ -93,7 +96,7 @@ const CadastroAtletas = (props) => {
                 telefone = telefone.replace('(', "")
                 telefone = telefone.replace(')', "")
                 telefone = telefone.replace('-', "")
-                setState({ ...state, telefoneCasa: telefone })
+                setState({ ...state, telefone: telefone })
                 break;
             case 'celular':
                 let celular = e.target.value
@@ -109,13 +112,15 @@ const CadastroAtletas = (props) => {
 
     function handleSave() {
         api.post('api/atleta', {
-            // imagem: state.imagem,
+            "imagem": state.imagem,
             "nome": state.nome,
             "naturalidade": state.naturalidade,
             "nacionalidade": state.nacionalidade,
             "profissao": state.profissao,
             "tipoAtleta": state.tipoAtleta,
             "graduacao": state.graduacao,
+            "genero": state.genero,
+            "informacoesAdicionais": state.informacoesAdicionais,
             "dataInicio": moment(state.dataInicio).format('YYYY-MM-DD'),
             "dataNascimento": moment(state.dataNascimento).format('YYYY-MM-DD'),
             "email": state.email,
@@ -146,13 +151,15 @@ const CadastroAtletas = (props) => {
         if (props.location.state) {
             api.put('api/atleta', {
                 id: props.location.state.id,
-                // imagem: state.imagem,
+                "imagem": state.imagem,
                 "nome": state.nome,
                 "naturalidade": state.naturalidade,
                 "nacionalidade": state.nacionalidade,
                 "profissao": state.profissao,
                 "tipoAtleta": state.tipoAtleta,
                 "graduacao": state.graduacao,
+                "genero": state.genero,
+                "informacoesAdicionais": state.informacoesAdicionais,
                 "dataInicio": moment(state.dataInicio).format('YYYY-MM-DD'),
                 "dataNascimento": moment(state.dataNascimento).format('YYYY-MM-DD'),
                 "email": state.email,
@@ -194,13 +201,14 @@ const CadastroAtletas = (props) => {
 
     function changePhoto(info) {
         if (info.file.status === 'uploading') {
-            setState({ loading: true });
+            setState({ ...state, loading: true });
             return;
         }
         if (info.file.status === 'done') {
             // Get this url from response in real world.
             getBase64(info.file.originFileObj, imageUrl =>
                 setState({
+                    ...state,
                     imagem: imageUrl,
                     loading: false,
                 }),
@@ -243,7 +251,7 @@ const CadastroAtletas = (props) => {
                         onChange={event => handleChange(event)}
                         className={styles.radio_funcao}
                     />
-                    <Radio
+                    {/* <Radio
                         label='Monitor'
                         name='tipoAtleta'
                         value='Monitor'
@@ -274,7 +282,7 @@ const CadastroAtletas = (props) => {
                         checked={state.tipoAtleta === 'Mestre'}
                         onChange={event => handleChange(event)}
                         className={styles.radio_funcao}
-                    />
+                    /> */}
 
                 </div>
             </div>
@@ -516,28 +524,6 @@ const CadastroAtletas = (props) => {
                                     keepCharPositions='true'
                                     value={state.celular}
                                     onChange={e => DesMask(e, 'celular')} />
-                            </div>
-                        </Row>
-                        <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>
-                            <div className={styles.card_inputs} style={{ width: '42.2%' }}>
-                                <Label>Mãe</Label>
-                                <Input
-                                    className={styles.inputs}
-                                    type="text"
-                                    name="mae"
-                                    value={state.mae}
-                                    onChange={event => handleChange(event)}
-                                />
-                            </div>
-                            <div className={styles.card_inputs} style={{ width: '42.2%' }}>
-                                <Label>Pai</Label>
-                                <Input
-                                    className={styles.inputs}
-                                    type="text"
-                                    name="pai"
-                                    value={state.pai}
-                                    onChange={event => handleChange(event)}
-                                />
                             </div>
                         </Row>
                         <Row style={{ marginLeft: '28px', marginRight: '0px', marginBottom: '15px' }}>

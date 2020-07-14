@@ -96,7 +96,6 @@ const AulasFrequencias = (props) => {
                                                 <StyledTableCell align="center">Aula</StyledTableCell>
                                                 <StyledTableCell align="center">Dia da Semana</StyledTableCell>
                                                 <StyledTableCell align="center">Alunos</StyledTableCell>
-                                                <StyledTableCell align="center">Professores</StyledTableCell>
                                                 <StyledTableCell align="center">Opções</StyledTableCell>
                                             </TableRow>
                                         </TableHead>
@@ -109,7 +108,6 @@ const AulasFrequencias = (props) => {
                                                     <StyledTableCell align="center">{list.nome}</StyledTableCell>
                                                     <StyledTableCell align="center">{moment(list.dataInicial).format('dddd')}</StyledTableCell>
                                                     <StyledTableCell align="center">{list.atletas.length}</StyledTableCell>
-                                                    <StyledTableCell align="center">{list.alunos}</StyledTableCell>
                                                     <StyledTableCell align="center">
                                                         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                                                             <Link to={{ pathname: `/CadastroAula/${index}`, state: list }} style={{ color: 'white', textDecoration: 'inherit', width: '30%' }}>

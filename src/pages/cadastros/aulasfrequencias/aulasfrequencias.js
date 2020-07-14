@@ -12,23 +12,6 @@ import { withRouter, Link } from 'react-router-dom'
 import api from '../../../service/api'
 import moment from 'moment'
 
-const colourOptions = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry2' },
-    { value: 'strawberry2', label: 'Strawberry3' },
-    { value: 'strawberry3', label: 'Strawberry4' },
-    { value: 'strawberry4', label: 'Strawberry5' },
-    { value: 'strawberry5', label: 'Strawberry6' },
-    { value: 'strawberry6', label: 'Strawberry7' },
-    { value: 'strawberry7', label: 'Strawberry8' },
-    { value: 'strawberry8', label: 'Strawberry9' },
-    { value: 'strawberry6456', label: 'Strawberry11' },
-    { value: 'strawberry456', label: 'Strawberry12' },
-    { value: 'strawberry73', label: 'Strawberry123' },
-    { value: 'strawberry34', label: 'Strawberry12' },
-    { value: 'strawberry123', label: 'Strawberry5215' },
-    { value: 'vanilla', label: 'Vanilla' }
-]
 
 const initialState = {
     nome: '',
@@ -74,6 +57,13 @@ const CadastroAulasFreq = (props) => {
     }, [props])
 
     function handleSave() {
+        const arrayAux = []
+
+        state.atletasAula.map((item) => {
+            return arrayAux.push({
+                atletaId: item.atletaId
+            })
+        })
         api.post('api/aula', {
             nome: state.nome,
             rua: state.rua,
@@ -84,10 +74,13 @@ const CadastroAulasFreq = (props) => {
             dataInicial: moment(state.dataInicio).format(),
             dataFinal: moment(state.dataFinal).format(),
             modalidadeId: state.modalidade,
-            atletas: state.atletasAula
+            atletas: arrayAux
         })
             .then((response) => {
                 message.success('Sucesso ao gravar Aula')
+                props.history.push({
+                    pathname: '/AulasFrequencias'
+                })
             })
             .catch((error) => {
                 message.warning('Erro ao gravar Aula')
@@ -95,18 +88,31 @@ const CadastroAulasFreq = (props) => {
     }
     async function refreshList() {
         const arrayAux = []
+        const arrayAtletas = []
         const arrayModalidade = []
         await api.get('api/modalidade').then(async (response) => { await response.data.map((item) => { arrayModalidade.push({ value: item.id, label: item.nome }) }) })
         await api.get('api/atleta').then(async (response) => { await response.data.map(async (item) => { arrayAux.push({ value: item.id, label: item.nome }) }) })
 
+
         if (props.location.state) {
             const arrayAuxLocation = []
-            console.log(props.location.state)
-            await props.location.state.atletas.map((item) => {
-                return arrayAuxLocation.push({
-                    atletaId: item.atletaId
+            arrayAux.filter(item1 => {
+                props.location.state.atletas.filter(item2 => {
+                    if (item1.value === item2.atletaId) {
+                        arrayAuxLocation.push({
+                            value: item2.atletaId,
+                            label: item1.label,
+                        })
+                    }
+                    else {
+                        arrayAtletas.push({
+                            value: item2.atletaId,
+                            label: item1.label,
+                        })
+                    }
                 })
             })
+
             await setState({
                 nome: props.location.state.nome,
                 modalidades: arrayModalidade,
@@ -118,7 +124,7 @@ const CadastroAulasFreq = (props) => {
                 cep: props.location.state.cep,
                 estado: props.location.state.estado,
                 cidade: props.location.state.cidade,
-                atletas: arrayAux,
+                atletas: arrayAtletas,
                 atletasAula: arrayAuxLocation,
                 editItem: true
             })
@@ -128,9 +134,14 @@ const CadastroAulasFreq = (props) => {
         }
 
     }
-    console.log(state)
     function handleEdit() {
+        const arrayAux = []
         if (props.location.state) {
+            state.atletasAula.map((item) => {
+                return arrayAux.push({
+                    atletaId: item.atletaId
+                })
+            })
             api.post('api/aula', {
                 id: props.location.state.id,
                 nome: state.nome,
@@ -142,10 +153,13 @@ const CadastroAulasFreq = (props) => {
                 dataInicial: moment(state.dataInicio).format(),
                 dataFinal: moment(state.dataFinal).format(),
                 modalidadeId: state.modalidade,
-                atletas: state.atletasAula
+                atletas: arrayAux
             })
                 .then((response) => {
                     message.success('Sucesso ao editar Aula')
+                    props.history.push({
+                        pathname: '/AulasFrequencias'
+                    })
                 })
                 .catch((error) => {
                     message.warning('Erro ao editar Aula')
@@ -171,7 +185,6 @@ const CadastroAulasFreq = (props) => {
         }
     }
     function setAtletas(event, option) {
-        console.log(event)
         if (event !== null) {
             event.map((item) => {
                 if (option.action === "select-option") {
@@ -181,14 +194,14 @@ const CadastroAulasFreq = (props) => {
                             [
                                 ...state.atletasAula,
                                 {
-                                    atletaId: item.value
+                                    atletaId: item.value,
+                                    label: item.label,
                                 }
                             ]
                     })
                 }
                 if (option.action === "remove-value") {
                     const data = state.atletasAula.filter(opt => opt.value !== option.removedValue.value)
-
                     if (state.atletasAula.length > 1) {
                         setState({
                             ...state,
@@ -210,20 +223,6 @@ const CadastroAulasFreq = (props) => {
             })
         }
 
-    }
-    const setDefault = () => {
-        const arrayAux = []
-        state.atletas.filter(item1 => {
-            state.atletasAula.filter(item2 => {
-                if (item1.value === item2.atletaId) {
-                    arrayAux.push({
-                        value: item2.atletaId,
-                        label: item1.label,
-                    })
-                }
-            })
-        })
-        return arrayAux
     }
     return (
         <div className={styles.container}>
@@ -347,7 +346,7 @@ const CadastroAulasFreq = (props) => {
                         isMulti
                         name="atletas"
                         options={state.atletas}
-                        value={setDefault()}
+                        value={state.atletasAula}
                         onChange={(event, options) => setAtletas(event, options)}
                         className="basic-multi-select"
                         classNamePrefix="select"
